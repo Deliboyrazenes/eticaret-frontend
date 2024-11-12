@@ -1,0 +1,211 @@
+/* CustomerLogin.css */
+.dark-login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #1a1a1a;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.dark-login-container::before {
+    content: '';
+    position: absolute;
+    width: 150%;
+    height: 150%;
+    background: radial-gradient(circle, rgba(0,102,255,0.1) 0%, rgba(0,0,0,0) 70%);
+    animation: pulse 4s ease-in-out infinite;
+}
+
+.dark-login-box {
+    background: rgba(30, 30, 30, 0.95);
+    padding: 40px;
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(7, 3, 224, 0.288);
+    width: 100%;
+    max-width: 420px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    z-index: 1;
+}
+
+.rocket-container {
+    text-align: center;
+    margin-bottom: 30px;
+    position: relative;
+}
+
+.rocket {
+    font-size: 48px;
+    animation: float 3s ease-in-out infinite;
+    display: inline-block;
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.login-header h1 {
+    color: white;
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.login-header p {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 16px;
+}
+
+.dark-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.input-group {
+    position: relative;
+}
+
+.input-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.input-group input {
+    width: 100%;
+    padding: 16px 16px 16px 48px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: white;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.input-group input:focus {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #0066ff;
+    box-shadow: 0 0 0 4px rgba(0, 102, 255, 0.1);
+}
+
+.input-group input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.forgot-password {
+    text-align: right;
+}
+
+.forgot-password a {
+    color: #0066ff;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.3s ease;
+}
+
+.forgot-password a:hover {
+    color: #339cff;
+}
+
+.dark-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 16px;
+    background: #0066ff;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dark-button:hover {
+    background: #0052cc;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 102, 255, 0.2);
+}
+
+.button-icon {
+    transition: transform 0.3s ease;
+}
+
+.dark-button:hover .button-icon {
+    transform: translateX(5px);
+}
+
+.register-link {
+    text-align: center;
+    margin-top: 24px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.register-link a {
+    color: #0066ff;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.register-link a:hover {
+    color: #339cff;
+}
+
+.loader {
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+@media (max-width: 480px) {
+    .dark-login-box {
+        padding: 30px 20px;
+    }
+
+    .login-header h1 {
+        font-size: 28px;
+    }
+
+    .input-group input {
+        padding: 14px 14px 14px 44px;
+    }
+}

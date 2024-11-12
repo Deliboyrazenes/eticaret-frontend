@@ -1,0 +1,72 @@
+/* Ortak stil: login-container ve login-card */
+.login-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #2c2c2c, #1a1a1a);
+  padding: 20px;
+}
+
+.login-card {
+  width: 320px;
+  padding: 2rem;
+  background: #2e2e2e;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+  text-align: center;
+}
+
+/* Başlık stili */
+.login-card h2 {
+  font-size: 1.8rem;
+  color: #e0e0e0;
+  margin-bottom: 1.5rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Input stili */
+.login-card input {
+  width: 100%;
+  padding: 0.8rem;
+  margin: 0.5rem 0;
+  border-radius: 8px;
+  border: none;
+  font-size: 1rem;
+  background: #1a1a1a;
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Input focus efekti */
+.login-card input:focus {
+  outline: none;
+  box-shadow: 0 0 8px rgba(100, 108, 255, 0.8);
+}
+
+/* Buton stili */
+.login-card button {
+  width: 100%;
+  padding: 0.8rem;
+  margin-top: 1rem;
+  background: linear-gradient(90deg, #0077ff, #3a8dff);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+/* Buton hover ve aktif efekti */
+.login-card button:hover {
+  background: linear-gradient(90deg, #005ecb, #357dff);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
+  transform: translateY(-3px);
+}
+
+.login-card button:active {
+  transform: translateY(1px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+}
