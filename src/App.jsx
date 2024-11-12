@@ -8,6 +8,7 @@ import LoginPage from './components/LoginPage';
 import CustomerLogin from "./components/CustomerLogin";
 import SellerLogin from './components/SellerLogin';
 import SellerDashboard from './components/SellerDashboard';
+import RegisterForm from './components/RegisterForm';
 
 const App = () => {
   return (
@@ -17,6 +18,7 @@ const App = () => {
         <Route path="/" element={<HomePage />} />
         <Route path="/products" element={<ProductList />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterForm />} />
         
         {/* Authentication Routes */}
         <Route path="/customer-login" element={<CustomerLogin />} />
