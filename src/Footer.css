@@ -1,10 +1,13 @@
-/* Footer.css */
 .footer {
   width: 100%;
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--primary-color); /* Sabit arka plan rengi */
+  /* veya */
+  background: #1a1f2c; /* Direkt renk kodu ile */
   backdrop-filter: blur(10px);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   margin-top: auto;
+  position: relative; /* Position eklendi */
+  z-index: 10; /* Z-index eklendi */
 }
 
 .footer-container {
@@ -28,13 +31,15 @@
 }
 
 .brand-title {
-  font-size: 2rem;
-  font-weight: 700;
-  background: linear-gradient(to right, #ffffff, #94a3b8);
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin: 0;
+  background: linear-gradient(135deg, var(--primary), #8b5cf6);
   -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
+  background-clip: text;     
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.5px;
+  }
 
 .brand-description {
   color: #94a3b8;
