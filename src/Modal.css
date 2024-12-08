@@ -1,0 +1,110 @@
+/* Modal.css */
+.modal-overlay {
+    position: fixed;
+    inset: 0; /* Top, right, bottom, left: 0 */
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1050;
+    animation: fadeIn 0.3s ease-out;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  .modal-content {
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+    max-width: 480px;
+    width: 100%;
+    text-align: center;
+    transform: translateY(-20px);
+    animation: slideIn 0.3s ease-out;
+    overflow: hidden;
+  }
+  
+  @keyframes slideIn {
+    from {
+      transform: translateY(-20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  .modal-content h2 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 1rem;
+  }
+  
+  .modal-content p {
+    font-size: 1rem;
+    color: #606060;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+  }
+  
+  .modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+  }
+  
+  .modal-buttons button {
+    flex: 1;
+    max-width: 150px;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    color: #ffffff;
+    background-color:#54c558;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .modal-buttons button:hover {
+    transform: translateY(-4px);
+    background-color:#2bb33d;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  }
+  
+  .modal-buttons button:focus {
+    outline: 2px solid rgba(0, 123, 255, 0.5);
+    outline-offset: 2px;
+  }
+  
+  .modal-buttons .cancel-button {
+    background: linear-gradient(135deg, #ff6b6b, #ff4757);
+    color: #ffffff;
+  }
+  
+  .modal-buttons .cancel-button:hover {
+    background: linear-gradient(135deg, #ff3b3b, #ff1e1e);
+  }
+  
+  .modal-buttons .confirm-button {
+    background: linear-gradient(135deg, #4caf50, #43a047);
+    color: #ffffff;
+  }
+  
+  .modal-buttons .confirm-button:hover {
+    background: linear-gradient(135deg, #3d8f45, #357c3e);
+  }
+  
