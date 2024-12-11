@@ -1,0 +1,93 @@
+/* Genel Sayfa Stili */
+.orders-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Arial', sans-serif;
+    color: #333;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #444;
+}
+
+/* Sipariş Kartları */
+.orders-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.order-card {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.order-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.order-header h3 {
+    margin: 0;
+    font-size: 18px;
+    color: #007BFF;
+}
+
+.order-header span {
+    font-size: 14px;
+    color: #888;
+}
+
+.order-details {
+    font-size: 14px;
+}
+
+.order-details p {
+    margin: 5px 0;
+}
+
+.order-details ul {
+    margin: 10px 0 0;
+    padding: 0 0 0 20px;
+    list-style: disc;
+}
+
+.order-details li {
+    margin: 5px 0;
+}
+
+/* Boş Siparişler */
+.orders-empty {
+    text-align: center;
+    margin: 50px 0;
+    color: #666;
+}
+
+.orders-empty p {
+    margin-top: 10px;
+    font-size: 16px;
+}
+
+/* Yükleme Mesajı */
+.orders-loading {
+    text-align: center;
+    font-size: 18px;
+    color: #007BFF;
+    margin: 50px 0;
+}

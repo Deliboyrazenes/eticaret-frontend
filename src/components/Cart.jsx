@@ -182,7 +182,7 @@ const Cart = () => {
                                 navigate('/checkout')  
                             }}  
                         >  
-                            Siparişi Tamamla  
+                            Ödemeye Geç
                         </button>  
                     </div>  
                 </div>  
