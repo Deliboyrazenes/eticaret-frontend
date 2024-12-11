@@ -18,6 +18,118 @@ function UserProfile() {
     const [editedUser, setEditedUser] = useState({});
     const [errors, setErrors] = useState({});
     const [activeTab, setActiveTab] = useState('profile');
+    const [showAddressForm, setShowAddressForm] = useState(false);
+    const [addressFormData, setAddressFormData] = useState({
+        city: '',
+        state: '',
+        description: '',
+        postalCode: ''
+    });
+
+    const [editingAddressId, setEditingAddressId] = useState(null);
+
+    // Adres formu değişiklik işleyicisi  
+    const handleAddressFormChange = (e) => {
+        const { name, value } = e.target;
+        setAddressFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+    // Adres düzenleme işleyicisini güncelle  
+    const handleEditAddress = (address) => {
+        console.log("Düzenlenecek adres:", address); // Debug için  
+        setEditingAddressId(address.id);
+        setAddressFormData({
+            city: address.city || '',
+            state: address.state || '',
+            description: address.description || '',
+            postalCode: address.postalCode || ''
+        });
+        setShowAddressForm(true);
+    };
+    // Adres gönderme işleyicisi  
+    const handleAddressSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const token = localStorage.getItem('token');
+            const addressData = {
+                city: addressFormData.city,
+                state: addressFormData.state,
+                description: addressFormData.description,
+                postalCode: addressFormData.postalCode
+            };
+
+            console.log("Gönderilecek adres verisi:", addressData); // Debug için  
+
+            let response;
+            if (editingAddressId) {
+                console.log("Güncelleme yapılıyor, ID:", editingAddressId); // Debug için  
+                response = await axios.put(
+                    `http://localhost:8080/address/${editingAddressId}`,
+                    addressData,
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                );
+            } else {
+                response = await axios.post(
+                    'http://localhost:8080/address',
+                    addressData,
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                );
+            }
+
+            if (response.data) {
+                console.log("Sunucu yanıtı:", response.data); // Debug için  
+                await fetchUserData();
+                setShowAddressForm(false);
+                setAddressFormData({
+                    city: '',
+                    state: '',
+                    description: '',
+                    postalCode: ''
+                });
+                setEditingAddressId(null);
+                alert(editingAddressId ? 'Adres başarıyla güncellendi' : 'Adres başarıyla eklendi');
+            }
+        } catch (error) {
+            console.error('Adres işlemi sırasında hata:', error);
+            console.error('Hata detayı:', error.response?.data); // Debug için  
+            alert('İşlem sırasında bir hata oluştu');
+        }
+    };
+
+    // Adres silme işleyicisi  
+    const handleDeleteAddress = async (addressId) => {
+        if (window.confirm('Bu adresi silmek istediğinizden emin misiniz?')) {
+            try {
+                const token = localStorage.getItem('token');
+                await axios.delete(
+                    `http://localhost:8080/address/${addressId}`,
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    }
+                );
+
+                alert('Adres başarıyla silindi');
+                fetchUserData();
+            } catch (error) {
+                console.error('Adres silinirken hata:', error);
+                alert('Adres silinirken bir hata oluştu');
+            }
+        }
+    };
 
     useEffect(() => {
         console.log('Component mounted');
@@ -27,36 +139,47 @@ function UserProfile() {
     useEffect(() => {
         console.log('User data updated:', user);
     }, [user]);
-
     const fetchUserData = async () => {
         try {
             const token = localStorage.getItem('token');
-            console.log('Token:', token);
+            console.log('Fetching with token:', token);
 
-            const response = await axios.get('http://localhost:8080/customer/profile', {
+            // Kullanıcı bilgilerini al  
+            const userResponse = await axios.get('http://localhost:8080/customer/profile', {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 }
             });
+            console.log('User Response:', userResponse.data);
 
-            console.log('API Response:', response.data);
+            // Adresleri al  
+            const addressResponse = await axios.get('http://localhost:8080/address', {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            console.log('Address Response:', addressResponse.data);
 
-            if (response.data) {
+            if (userResponse.data) {
                 const userData = {
-                    ...response.data,
-                    dateOfBirth: response.data.dateOfBirth ?
-                        new Date(response.data.dateOfBirth).toISOString().split('T')[0] : ''
+                    ...userResponse.data,
+                    dateOfBirth: userResponse.data.dateOfBirth
+                        ? new Date(userResponse.data.dateOfBirth).toISOString().split('T')[0]
+                        : '',
+                    addresses: addressResponse.data || []
                 };
+                console.log('Setting user data:', userData);
                 setUser(userData);
                 setEditedUser(userData);
             }
         } catch (error) {
-            console.error('Kullanıcı bilgileri yüklenirken hata:', error);
+            console.error('Veri yüklenirken hata:', error);
             if (error.response) {
                 console.log('Error response:', error.response);
             }
-            setErrors({ api: 'Kullanıcı bilgileri yüklenemedi' });
+            setErrors({ api: 'Bilgiler yüklenemedi' });
         }
     };
 
@@ -219,6 +342,7 @@ function UserProfile() {
     };
 
     return (
+        <div className='user-profile'>
         <div className='user-profile-body'>
             <div className="modern-profile-container">
                 <div className="profile-header">
@@ -468,31 +592,118 @@ function UserProfile() {
                             <div className="addresses-section">
                                 <div className="addresses-header">
                                     <h2>Kayıtlı Adreslerim</h2>
-                                    <button className="add-address-btn">
+                                    <button
+                                        className="add-address-btn"
+                                        onClick={() => setShowAddressForm(true)}
+                                    >
                                         <FiPlus /> Yeni Adres Ekle
                                     </button>
                                 </div>
+
+                                {showAddressForm && (
+                                    <div className="address-form-container">
+                                        <form onSubmit={handleAddressSubmit} className="address-form">
+                                            <div className="form-group">
+                                                <label>Şehir</label>
+                                                <input
+                                                    type="text"
+                                                    name="city"
+                                                    value={addressFormData.city}
+                                                    onChange={handleAddressFormChange}
+                                                    required
+                                                />
+                                            </div>
+                                            <div className="form-group">
+                                                <label>İlçe</label>
+                                                <input
+                                                    type="text"
+                                                    name="state"
+                                                    value={addressFormData.state}
+                                                    onChange={handleAddressFormChange}
+                                                    required
+                                                />
+                                            </div>
+                                            <div className="form-group">
+                                                <label>Adres Detayı</label>
+                                                <textarea
+                                                    name="description"
+                                                    value={addressFormData.description}
+                                                    onChange={handleAddressFormChange}
+                                                    required
+                                                />
+                                            </div>
+                                            <div className="form-group">
+                                                <label>Posta Kodu</label>
+                                                <input
+                                                    type="text"
+                                                    name="postalCode"
+                                                    value={addressFormData.postalCode}
+                                                    onChange={handleAddressFormChange}
+                                                    required
+                                                    maxLength="5"
+                                                    pattern="\d{5}"
+                                                    title="Posta kodu 5 haneli olmalıdır"
+                                                />
+                                            </div>
+                                            <div className="form-actions">
+                                                <button type="submit" className="save-btn">
+                                                    <FiSave /> {editingAddressId ? 'Güncelle' : 'Kaydet'}
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    className="cancel-btn"
+                                                    onClick={() => {
+                                                        setShowAddressForm(false);
+                                                        setAddressFormData({
+                                                            city: '',
+                                                            state: '',
+                                                            description: '',
+                                                            postalCode: ''
+                                                        });
+                                                        setEditingAddressId(null);
+                                                    }}
+                                                >
+                                                    İptal
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                )}
+
+                                
                                 <div className="addresses-grid">
-                                    {user.addresses && user.addresses.map((address, index) => (
-                                        <div key={index} className="address-card">
-                                            <div className="address-card-header">
-                                                <h3>{address.title}</h3>
-                                                <div className="address-actions">
-                                                    <button className="edit-btn">
-                                                        <FiEdit />
-                                                    </button>
-                                                    <button className="delete-btn">
-                                                        <FiTrash2 />
-                                                    </button>
+                                    {user.addresses && user.addresses.length > 0 ? (
+                                        user.addresses.map((address) => (
+                                            <div key={address.id} className="address-card">
+                                                <div className="address-card-header">
+                                                    <h3>{address.city}</h3>
+                                                    <div className="address-actions">
+                                                        <button
+                                                            className="edit-btn"
+                                                            onClick={() => handleEditAddress(address)}
+                                                        >
+                                                            <FiEdit />
+                                                        </button>
+                                                        <button
+                                                            className="delete-btn"
+                                                            onClick={() => handleDeleteAddress(address.id)}
+                                                        >
+                                                            <FiTrash2 />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div className="address-card-content">
+                                                    <p><strong>İlçe:</strong> {address.state}</p>
+                                                    <p><strong>Adres:</strong> {address.description}</p>
+                                                    <p><strong>Posta Kodu:</strong> {address.postalCode}</p>
                                                 </div>
                                             </div>
-                                            <div className="address-card-content">
-                                                <p>{address.fullAddress}</p>
-                                                <p>{address.district}/{address.city}</p>
-                                                <p>{address.postalCode}</p>
-                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className="no-address-message">
+                                            <p>Henüz kayıtlı adresiniz bulunmamaktadır.</p>
                                         </div>
-                                    ))}
+                                    )}
                                 </div>
                             </div>
                         )}
@@ -513,6 +724,7 @@ function UserProfile() {
                     </div>
                 </div>
             </div>
+        </div>
         </div>
     );
 }
