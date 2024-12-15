@@ -4,6 +4,8 @@ import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import Footer from './Footer';
 import Menu from './Menu';
+import { motion } from 'framer-motion';
+import { FaBox, FaShippingFast, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 import '../Orders.css';
 
 const Orders = () => {
@@ -14,6 +16,41 @@ const Orders = () => {
     useEffect(() => {
         fetchOrders();
     }, []);
+
+    const getStatusText = (status) => {
+        const statusMap = {
+            'PENDING': 'BEKLEMEDE',
+            'SHIPPED': 'KARGOYA VERİLDİ',
+            'DELIVERED': 'TESLİM EDİLDİ',
+            'CANCELLED': 'İPTAL EDİLDİ'
+        };
+        return statusMap[status] || 'BEKLEMEDE';
+    };
+
+    const getStatusIcon = (status) => {
+        switch (status) {
+            case 'PENDING':
+                return <FaBox />;
+            case 'SHIPPED':
+                return <FaShippingFast />;
+            case 'DELIVERED':
+                return <FaCheckCircle />;
+            case 'CANCELLED':
+                return <FaTimesCircle />;
+            default:
+                return <FaBox />;
+        }
+    };
+
+    const getStatusClass = (status) => {
+        const statusClassMap = {
+            'PENDING': 'status-pending',
+            'SHIPPED': 'status-shipped',
+            'DELIVERED': 'status-delivered',
+            'CANCELLED': 'status-cancelled'
+        };
+        return statusClassMap[status] || 'status-pending';
+    };
 
     const fetchOrders = async () => {
         try {
@@ -51,60 +88,124 @@ const Orders = () => {
         return Object.values(grouped);
     };
 
-    if (loading) {
-        return <div className="loading-spinner">Siparişler Yükleniyor...</div>;
-    }
+    const formatDate = (dateString) => {
+        const options = { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        };
+        return new Date(dateString).toLocaleDateString('tr-TR', options);
+    };
 
-    if (orders.length === 0) {
+    if (loading) {
         return (
-            <div className="empty-orders">
-                <h2>Henüz Siparişiniz Yok</h2>
-                <p>Alışveriş yapmak için ürünlerimize göz atabilirsiniz.</p>
-                <button onClick={() => navigate('/products')} className="btn-primary">
-                    Alışverişe Başla
-                </button>
+            <div className="loading-container">
+                <div className="loading-spinner"></div>
+                <p>Siparişleriniz Yükleniyor...</p>
             </div>
         );
     }
 
-    return (
-        <div className="orders-fullscreen">
-            <Menu />
-            <div className="orders-header">
-                <h1>Siparişlerim</h1>
-                <div className="atlas-accent"></div>
-                <p>Sipariş geçmişinizi buradan görüntüleyebilirsiniz.</p>
-            </div>
+    if (orders.length === 0) {
+        return (
+            <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="empty-orders-container"
+            >
+                <div className="empty-orders">
+                    <img src="/empty-cart.svg" alt="Boş Siparişler" />
+                    <h2>Henüz Siparişiniz Bulunmuyor</h2>
+                    <p>Hemen alışverişe başlayarak siparişlerinizi buradan takip edebilirsiniz.</p>
+                    <motion.button 
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => navigate('/products')} 
+                        className="shop-now-button"
+                    >
+                        Alışverişe Başla
+                    </motion.button>
+                </div>
+            </motion.div>
+        );
+    }
 
-            <div className="orders-grid">
-                {orders.map((order) => (
-                    <div key={order.id} className="order-card">
-                        <div className="order-card-header">
-                            <h3>Sipariş #{order.id}</h3>
-                            <p className={`order-status ${order.status ? order.status.toLowerCase() : 'unknown'}`}>
-                                {order.status || 'HAZIRLANIYOR'}
-                            </p>
-                        </div>
-                        <div className="order-details">
-                            <p><strong>Tarih:</strong> {new Date(order.orderDate).toLocaleDateString()}</p>
-                            <p><strong>Toplam Tutar:</strong> {order.amount} TL</p>
-                        </div>
-                        <div className="order-items">
-                            <h4>Ürünler:</h4>
-                            <ul>
-                                {groupOrderItems(order.orderItems).map((item) => (
-                                    <li key={`${item.product.id}-${item.quantity}`}>
-                                        {item.product.name} {item.quantity > 1 ? `(${item.quantity} adet)` : ''}
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    </div>
-                ))}
-            </div>
+    return (
+        <div className="orders-page">
+            <Menu />
+            <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="orders-container"
+            >
+                <div className="orders-header">
+                    <h1>Siparişlerim</h1>
+                    <div className="header-underline"></div>
+                    <p>Tüm siparişlerinizi buradan takip edebilirsiniz</p>
+                </div>
+
+                <div className="orders-grid">
+                    {orders.map((order) => (
+                        <motion.div
+                            key={order.id}
+                            whileHover={{ scale: 1.02 }}
+                            className="order-card"
+                        >
+                            <div className="order-card-header">
+                                <div className="order-info">
+                                    {/* <h3>Sipariş #{order.id}</h3> */}
+                                    <div className={`status-badge ${getStatusClass(order.status)}`}>
+                                        <span className="status-icon">{getStatusIcon(order.status)}</span>
+                                        <span className="status-text">{getStatusText(order.status)}</span>
+                                    </div>
+                                </div>
+                                <div className="order-date">
+                                    {formatDate(order.orderDate)}
+                                </div>
+                            </div>
+
+                            <div className="order-content">
+                                <div className="order-items-list">
+                                    {groupOrderItems(order.orderItems).map((item) => (
+                                        <motion.div 
+                                            key={`${item.product.id}-${item.quantity}`} 
+                                            className="order-item"
+                                        >
+                                         
+                                            <div className="item-details">
+                                                <h4>{item.product.name}</h4>
+                                                <div className="item-meta">
+                                                    <p className="item-quantity">
+                                                        {item.quantity} adet
+                                                    </p>
+                                                 {/* <p className="item-price">
+                                                        {(item.price * item.quantity).toLocaleString('tr-TR')} TL
+                                                    </p> */}
+                                                </div>
+                                            </div>
+                                        </motion.div>
+                                    ))}
+                                </div>
+                                <div className="order-summary">
+                                    {/* <div className="delivery-address">
+                                        <h4>Teslimat Adresi</h4>
+                                        <p>{order.address}</p>
+                                    </div> */}
+                                    <div className="total-amount">
+                                        <span>Toplam Tutar</span>
+                                        <strong>{order.amount.toLocaleString('tr-TR')} TL</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
+                    ))}
+                </div>
+            </motion.div>
             <Footer />
         </div>
     );
 };
 
-export default Orders;
+export default Orders;   
