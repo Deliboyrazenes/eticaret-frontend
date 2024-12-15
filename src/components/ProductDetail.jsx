@@ -150,9 +150,16 @@ const ProductDetail = () => {
                 <div className="product-detail-grid">
                     <div className="product-image-section">
                         <img
-                            src={`https://picsum.photos/800/800?random=${product.id}`}
+                            src={product.imagePath
+                                ? `http://localhost:8080/uploads/${product.imagePath}`
+                                : `http://localhost:8080/uploads/default-image.jpeg`}
                             alt={product.name}
-                            className="main-image"
+                            loading="lazy"
+                            onError={(e) => {
+                                console.log('Resim yükleme hatası:', product.imagePath);
+                                e.target.src = 'http://localhost:8080/uploads/default-image.jpeg';
+                            }}
+                            className="product-image"
                         />
                     </div>
 
