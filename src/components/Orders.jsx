@@ -11,6 +11,7 @@ import '../Orders.css';
 const Orders = () => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [activeTab, setActiveTab] = useState('active'); // 'active' veya 'completed'
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -44,12 +45,12 @@ const Orders = () => {
 
     const getStatusClass = (status) => {
         const statusClassMap = {
-            'PENDING': 'status-pending',
-            'SHIPPED': 'status-shipped',
-            'DELIVERED': 'status-delivered',
-            'CANCELLED': 'status-cancelled'
+            'PENDING': 'order-tracking__status-pending',
+            'SHIPPED': 'order-tracking__status-shipped',
+            'DELIVERED': 'order-tracking__status-delivered',
+            'CANCELLED': 'order-tracking__status-cancelled'
         };
-        return statusClassMap[status] || 'status-pending';
+        return statusClassMap[status] || 'order-tracking__status-pending';
     };
 
     const fetchOrders = async () => {
@@ -92,17 +93,28 @@ const Orders = () => {
         const options = { 
             year: 'numeric', 
             month: 'long', 
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
+            day: 'numeric'
         };
         return new Date(dateString).toLocaleDateString('tr-TR', options);
     };
 
+    const filterOrders = (orders) => {
+        if (activeTab === 'active') {
+            // Sadece PENDING (bekleyen) siparişleri göster
+            return orders.filter(order => order.status === 'PENDING');
+        } else {
+            return orders.filter(order => 
+                order.status === 'SHIPPED' || 
+                order.status === 'DELIVERED' || 
+                order.status === 'CANCELLED'
+            );
+        }
+    };
+
     if (loading) {
         return (
-            <div className="loading-container">
-                <div className="loading-spinner"></div>
+            <div className="order-tracking__loading-container">
+                <div className="order-tracking__loading-spinner"></div>
                 <p>Siparişleriniz Yükleniyor...</p>
             </div>
         );
@@ -113,9 +125,9 @@ const Orders = () => {
             <motion.div 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="empty-orders-container"
+                className="order-tracking__empty-container"
             >
-                <div className="empty-orders">
+                <div className="order-tracking__empty-content">
                     <img src="/empty-cart.svg" alt="Boş Siparişler" />
                     <h2>Henüz Siparişiniz Bulunmuyor</h2>
                     <p>Hemen alışverişe başlayarak siparişlerinizi buradan takip edebilirsiniz.</p>
@@ -123,7 +135,7 @@ const Orders = () => {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => navigate('/products')} 
-                        className="shop-now-button"
+                        className="order-tracking__shop-button"
                     >
                         Alışverişe Başla
                     </motion.button>
@@ -132,68 +144,76 @@ const Orders = () => {
         );
     }
 
+    const filteredOrders = filterOrders(orders);
+
     return (
-        <div className="orders-page">
+        <div className="order-tracking__page">
             <Menu />
             <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="orders-container"
+                className="order-tracking__container"
             >
-                <div className="orders-header">
+                <div className="order-tracking__header">
                     <h1>Siparişlerim</h1>
-                    <div className="header-underline"></div>
+                    <div className="order-tracking__header-underline"></div>
                     <p>Tüm siparişlerinizi buradan takip edebilirsiniz</p>
                 </div>
 
-                <div className="orders-grid">
-                    {orders.map((order) => (
+                <div className="order-tracking__tabs">
+                    <button 
+                        className={`order-tracking__tab-button ${activeTab === 'active' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('active')}
+                    >
+                        Aktif Siparişler
+                    </button>
+                    <button 
+                        className={`order-tracking__tab-button ${activeTab === 'completed' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('completed')}
+                    >
+                        Tamamlanan Siparişler
+                    </button>
+                </div>
+
+                <div className="order-tracking__grid">
+                    {filteredOrders.map((order) => (
                         <motion.div
                             key={order.id}
                             whileHover={{ scale: 1.02 }}
-                            className="order-card"
+                            className="order-tracking__card"
                         >
-                            <div className="order-card-header">
-                                <div className="order-info">
-                                    {/* <h3>Sipariş #{order.id}</h3> */}
-                                    <div className={`status-badge ${getStatusClass(order.status)}`}>
-                                        <span className="status-icon">{getStatusIcon(order.status)}</span>
-                                        <span className="status-text">{getStatusText(order.status)}</span>
+                            <div className="order-tracking__card-header">
+                                <div className="order-tracking__info">
+                                    <div className={`order-tracking__badge ${getStatusClass(order.status)}`}>
+                                        <span className="order-tracking__status-icon">{getStatusIcon(order.status)}</span>
+                                        <span className="order-tracking__status-text">{getStatusText(order.status)}</span>
                                     </div>
                                 </div>
-                                <div className="order-date">
+                                <div className="order-tracking__date">
                                     {formatDate(order.orderDate)}
                                 </div>
                             </div>
 
-                            <div className="order-content">
-                                <div className="order-items-list">
+                            <div className="order-tracking__content">
+                                <div className="order-tracking__items-list">
                                     {groupOrderItems(order.orderItems).map((item) => (
                                         <motion.div 
                                             key={`${item.product.id}-${item.quantity}`} 
-                                            className="order-item"
+                                            className="order-tracking__item"
                                         >
-                                         
-                                            <div className="item-details">
+                                            <div className="order-tracking__item-details">
                                                 <h4>{item.product.name}</h4>
-                                                <div className="item-meta">
-                                                    <p className="item-quantity">
+                                                <div className="order-tracking__item-meta">
+                                                    <p className="order-tracking__item-quantity">
                                                         {item.quantity} adet
                                                     </p>
-                                                 {/* <p className="item-price">
-                                                        {(item.price * item.quantity).toLocaleString('tr-TR')} TL
-                                                    </p> */}
                                                 </div>
                                             </div>
                                         </motion.div>
                                     ))}
                                 </div>
-                                <div className="order-summary">
-                                    {/* <div className="delivery-address">
-                                        <h4>Teslimat Adresi</h4>
-                                        <p>{order.address}</p>
-                                    </div> */}
-                                    <div className="total-amount">
+                                <div className="order-tracking__summary">
+                                    <div className="order-tracking__total">
                                         <span>Toplam Tutar</span>
                                         <strong>{order.amount.toLocaleString('tr-TR')} TL</strong>
                                     </div>
@@ -208,4 +228,4 @@ const Orders = () => {
     );
 };
 
-export default Orders;   
+export default Orders;
