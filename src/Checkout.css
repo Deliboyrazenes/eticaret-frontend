@@ -1,263 +1,238 @@
-/* Genel Ayarlar */  
-body {  
-    font-family: 'Poppins', sans-serif;  
-    background: linear-gradient(135deg, #e0eafc, #cfdef3);  
-    margin: 0;  
-    padding: 0;  
-    color: #333;  
-}  
-
-.checkout-body {  
-    padding: 40px 20px;  
-    display: flex;  
-    justify-content: center;  
-    align-items: center;  
-    min-height: 100vh;  
-}  
-
-.checkout-container {  
-    max-width: 1200px;  
-    width: 100%;  
-    background: rgba(255, 255, 255, 0.8);  
-    backdrop-filter: blur(10px);  
-    padding: 30px;  
-    border-radius: 16px;  
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);  
-    animation: fadeIn 0.5s ease-in-out;  
-}  
-
-.checkout-title {  
-    text-align: center;  
-    font-size: 36px;  
-    margin-bottom: 30px;  
-    color: #333;  
-    font-weight: 700;  
-    letter-spacing: 1px;  
-}  
-
-/* Grid Yapısı */  
-.checkout-grid {  
-    display: grid;  
-    grid-template-columns: repeat(3, 1fr);  
-    gap: 20px;  
-}  
-
-.checkout-card {  
-    background: rgba(255, 255, 255, 0.9);  
-    padding: 20px;  
-    border-radius: 16px;  
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);  
-    transition: transform 0.3s ease, box-shadow 0.3s ease;  
-    position: relative;  
-    border: 1px solid rgba(255, 255, 255, 0.5);  
-    backdrop-filter: blur(10px);  
-}  
-
-.checkout-card:hover {  
-    transform: translateY(-5px);  
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);  
-}  
-
-.checkout-card h3 {  
-    font-size: 22px;  
-    margin-bottom: 15px;  
-    color: #444;  
-    font-weight: 600;  
-}  
-
-/* Input Alanları */  
-.checkout-card input {  
-    width: 100%;  
-    padding: 14px;  
-    margin-bottom: 15px;  
-    border: 1px solid #ddd;  
-    border-radius: 8px;  
-    font-size: 15px;  
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;  
-    background: rgba(255, 255, 255, 0.7);  
-    backdrop-filter: blur(5px);  
-    color: #333;  
-}  
-
-.checkout-card input:focus {  
-    border-color: #007bff;  
-    outline: none;  
-    box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);  
-}  
-
-.checkout-card input::placeholder {  
-    color: #aaa;  
-    font-style: italic;  
-}  
-
-/* Sipariş Özeti */  
-.order-summary {  
-    margin-bottom: 20px;  
-}  
-
-.order-item {  
-    display: flex;  
-    justify-content: space-between;  
-    margin-bottom: 10px;  
-    font-size: 15px;  
-    color: #555;  
-}  
-
-.order-item span:last-child {  
-    font-weight: 600;  
-}  
-
-.order-total {  
-    font-weight: bold;  
-    display: flex;  
-    justify-content: space-between;  
-    font-size: 18px;  
-    color: #333;  
-    border-top: 1px solid #ddd;  
-    padding-top: 10px;  
-}  
-
-/* Buton */  
-.checkout-button {  
-    display: block;  
-    width: 100%;  
-    background: linear-gradient(90deg, #007bff, #00c6ff);  
-    color: #fff;  
-    padding: 15px;  
-    border: none;  
-    border-radius: 8px;  
-    cursor: pointer;  
-    font-size: 16px;  
-    text-align: center;  
-    margin-top: 20px;  
-    transition: background-color 0.3s ease, transform 0.2s ease;  
-    font-weight: 600;  
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);  
-}  
-
-.checkout-button:hover {  
-    transform: scale(1.02);  
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);  
-}  
-
-.checkout-button:active {  
-    transform: scale(0.98);  
-}  
-
-/* Animasyonlar */  
-@keyframes fadeIn {  
-    from {  
-        opacity: 0;  
-        transform: translateY(10px);  
-    }  
-    to {  
-        opacity: 1;  
-        transform: translateY(0);  
-    }  
-}  
-
-/* Responsive Tasarım */  
-@media (max-width: 1024px) {  
-    .checkout-grid {  
-        grid-template-columns: repeat(2, 1fr);  
-    }  
-}  
-
-@media (max-width: 768px) {  
-    .checkout-grid {  
-        grid-template-columns: 1fr;  
-    }  
-}  
-
-/* Ekstra Detaylar */  
-.checkout-card::before {  
-    content: '';  
-    position: absolute;  
-    top: 0;  
-    left: 0;  
-    width: 100%;  
-    height: 5px;  
-    background: linear-gradient(90deg, #007bff, #00c6ff);  
-    border-radius: 16px 16px 0 0;  
-}  
-
-.checkout-card input:disabled {  
-    background: #f5f5f5;  
-    cursor: not-allowed;  
-}  
-
-/* Tooltip */  
-.checkout-card input:hover::after {  
-    content: attr(placeholder);  
-    position: absolute;  
-    top: -25px;  
-    left: 10px;  
-    background: #007bff;  
-    color: #fff;  
-    padding: 5px 10px;  
-    border-radius: 4px;  
-    font-size: 12px;  
-    white-space: nowrap;  
-    opacity: 0;  
-    transform: translateY(10px);  
-    transition: opacity 0.3s ease, transform 0.3s ease;  
-}  
-
-.checkout-card input:hover::after {  
-    opacity: 1;  
-    transform: translateY(0);  
-}  
-
-/* Adres ve Kart Bilgileri */  
-.address-card input,  
-.payment-card input {  
-    font-size: 15px;  
-    padding: 14px;  
-    margin-bottom: 12px;  
-    border: 1px solid #ccc;  
-    border-radius: 6px;  
-    background: rgba(255, 255, 255, 0.7);  
-    transition: all 0.3s ease;  
-}  
-
-.address-card input:focus,  
-.payment-card input:focus {  
-    border-color: #007bff;  
-    box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);  
-}  
-
-.selectedAdress{
-    margin: 8px;
+/* Checkout Sayfası İçin Özel Stiller */
+.checkout-body {
+    padding: 40px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #e0eafc, #cfdef3);
 }
 
-/* Kart Bilgileri */  
-.payment-card input {  
-    font-family: 'Courier New', Courier, monospace;  
-    letter-spacing: 1px;  
-}  
+.checkout-container {
+    max-width: 1200px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    animation: checkoutFadeIn 0.5s ease-in-out;
+}
 
-/* Placeholder Stilleri */  
-.payment-card input::placeholder {  
-    color: #bbb;  
-    font-style: italic;  
-}  
+.checkout-title {
+    text-align: center;
+    font-size: 36px;
+    margin-bottom: 30px;
+    color: #333;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
 
-/* Mobil İçin Ekstra Stiller */  
-@media (max-width: 576px) {  
-    .checkout-container {  
-        padding: 20px;  
-    }  
+/* Grid Yapısı */
+.checkout-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
 
-    .checkout-title {  
-        font-size: 28px;  
-    }  
+.checkout-card {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
 
-    .checkout-card {  
-        padding: 15px;  
-    }  
+.checkout-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
 
-    .checkout-button {  
-        padding: 12px;  
-        font-size: 14px;  
-    }  
-}  
+.checkout-card h3 {
+    font-size: 22px;
+    margin-bottom: 15px;
+    color: #444;
+    font-weight: 600;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e0eafc;
+}
+
+/* Form Elementleri */
+.checkout-card input,
+.checkout-card select {
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.7);
+    color: #333;
+}
+
+.checkout-card input:focus,
+.checkout-card select:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+}
+
+/* Sipariş Özeti */
+.order-summary {
+    margin-bottom: 20px;
+}
+
+.order-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    font-size: 15px;
+    color: #555;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.order-total {
+    margin-top: 20px;
+    padding: 15px 0;
+    display: flex;
+    justify-content: space-between;
+    font-size: 18px;
+    color: #333;
+    font-weight: 700;
+    border-top: 2px solid #e0eafc;
+}
+
+/* Ödeme Yöntemi */
+.payment-method-card select {
+    width: 100%;
+    padding: 14px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    background-color: white;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 20px;
+}
+
+/* Kart Bilgileri Formu */
+.card-info-form {
+    margin-top: 20px;
+}
+
+.card-info-row {
+    display: flex;
+    gap: 15px;
+}
+
+.card-info-row input {
+    width: calc(50% - 7.5px);
+}
+
+/* Adres Seçimi */
+.selectedAddress {
+    margin: 8px 0;
+    padding: 10px;
+    background: rgba(224, 234, 252, 0.3);
+    border-radius: 8px;
+    border: 1px solid #e0eafc;
+}
+
+/* Checkout Butonu */
+.checkout-button {
+    width: 100%;
+    background: linear-gradient(90deg, #007bff, #00c6ff);
+    color: #fff;
+    padding: 16px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 30px;
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.2);
+}
+
+.checkout-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 123, 255, 0.3);
+}
+
+.checkout-button:active {
+    transform: translateY(0);
+}
+
+/* Animasyonlar */
+@keyframes checkoutFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Tasarım */
+@media (max-width: 1024px) {
+    .checkout-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .checkout-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .card-info-row {
+        flex-direction: column;
+        gap: 0;
+    }
+    
+    .card-info-row input {
+        width: 100%;
+    }
+}
+
+@media (max-width: 576px) {
+    .checkout-container {
+        padding: 20px;
+    }
+    
+    .checkout-title {
+        font-size: 28px;
+    }
+    
+    .checkout-card {
+        padding: 15px;
+    }
+}
+
+/* Loading State */
+.checkout-loading {
+    text-align: center;
+    padding: 40px;
+    color: #007bff;
+    font-size: 18px;
+}
+
+/* Error State */
+.checkout-error {
+    color: #dc3545;
+    text-align: center;
+    padding: 20px;
+    background: rgba(220, 53, 69, 0.1);
+    border-radius: 8px;
+    margin: 20px 0;
+}
