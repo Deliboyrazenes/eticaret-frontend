@@ -184,7 +184,21 @@ const SellerDashboard = () => {
 
       const updatedOrder = await response.json();
       showToast('Sipariş başarıyla kargoya verildi', 'success');
-      fetchOrders(); // Siparişleri yeniden yükle
+
+      // Siparişleri yeniden yüklemeden önce, güncellenen siparişin durumunu yerel olarak güncelle
+      const updatedOrders = orders.map(order => {
+        if (order.id === orderId) {
+          order.status = 'SHIPPED';
+        }
+        return order;
+      });
+      setOrders(updatedOrders);
+
+      // "Kargoya Verilen Siparişler" sekmesine geç
+      setOrderTab('shipped');
+
+      // Siparişleri yeniden yükle
+      fetchOrders();
     } catch (error) {
       console.error('Sipariş güncelleme hatası:', error);
       showToast(error.message, 'error');
@@ -194,70 +208,70 @@ const SellerDashboard = () => {
   // CRUD İşlemleri
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     try {
-        let imageFileName = formData.imagePath; // Mevcut resim yolunu koru
+      let imageFileName = formData.imagePath; // Mevcut resim yolunu koru
 
-        // Yeni dosya seçildiyse yükle
-        if (selectedFile) {
-            const formDataFile = new FormData();
-            formDataFile.append('file', selectedFile);
+      // Yeni dosya seçildiyse yükle
+      if (selectedFile) {
+        const formDataFile = new FormData();
+        formDataFile.append('file', selectedFile);
 
-            const uploadResponse = await fetch('http://localhost:8080/api/upload/image', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${getAuthToken()}`
-                },
-                body: formDataFile
-            });
+        const uploadResponse = await fetch('http://localhost:8080/api/upload/image', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${getAuthToken()}`
+          },
+          body: formDataFile
+        });
 
-            if (!uploadResponse.ok) {
-                throw new Error('Dosya yüklenemedi');
-            }
-
-            imageFileName = await uploadResponse.text();
+        if (!uploadResponse.ok) {
+          throw new Error('Dosya yüklenemedi');
         }
 
-        // Ürün verilerini hazırla
-        const productData = {
-            ...formData,
-            imagePath: imageFileName
-        };
+        imageFileName = await uploadResponse.text();
+      }
 
-        // Ürün kaydetme/güncelleme isteği
-        const productResponse = await fetch(
-            editingProductId
-                ? `http://localhost:8080/product/update/${editingProductId}`
-                : `http://localhost:8080/product/add/${categoryId}`,
-            {
-                method: editingProductId ? "PUT" : "POST",
-                headers: {
-                    ...createHeaders(),
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(productData)
-            }
-        );
+      // Ürün verilerini hazırla
+      const productData = {
+        ...formData,
+        imagePath: imageFileName
+      };
 
-        if (!productResponse.ok) {
-            throw new Error(editingProductId ? 'Ürün güncellenemedi' : 'Ürün eklenemedi');
+      // Ürün kaydetme/güncelleme isteği
+      const productResponse = await fetch(
+        editingProductId
+          ? `http://localhost:8080/product/update/${editingProductId}`
+          : `http://localhost:8080/product/add/${categoryId}`,
+        {
+          method: editingProductId ? "PUT" : "POST",
+          headers: {
+            ...createHeaders(),
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(productData)
         }
+      );
 
-        showToast(
-            editingProductId ? 'Ürün başarıyla güncellendi' : 'Ürün başarıyla eklendi',
-            'success'
-        );
+      if (!productResponse.ok) {
+        throw new Error(editingProductId ? 'Ürün güncellenemedi' : 'Ürün eklenemedi');
+      }
 
-        // Form temizleme
-        setFormData({ name: "", price: "", stock: "", brand: "", imagePath: "" });
-        setSelectedFile(null);
-        setPreviewUrl(null);
-        setEditingProductId(null);
-        fetchProducts();
+      showToast(
+        editingProductId ? 'Ürün başarıyla güncellendi' : 'Ürün başarıyla eklendi',
+        'success'
+      );
+
+      // Form temizleme
+      setFormData({ name: "", price: "", stock: "", brand: "", imagePath: "" });
+      setSelectedFile(null);
+      setPreviewUrl(null);
+      setEditingProductId(null);
+      fetchProducts();
     } catch (error) {
-        showToast(error.message, 'error');
+      showToast(error.message, 'error');
     }
-};
+  };
 
   const handleDelete = (productId) => {
     openModal(
@@ -284,19 +298,19 @@ const SellerDashboard = () => {
 
   const handleEdit = (product) => {
     setFormData({
-        name: product.name,
-        price: product.price,
-        stock: product.stock,
-        brand: product.brand,
-        imagePath: product.imagePath // Mevcut resim yolunu da form verilerine ekle
+      name: product.name,
+      price: product.price,
+      stock: product.stock,
+      brand: product.brand,
+      imagePath: product.imagePath // Mevcut resim yolunu da form verilerine ekle
     });
     setCategoryId(product.categoryId);
     setEditingProductId(product.id);
     // Eğer ürünün resmi varsa önizleme göster
     if (product.imagePath) {
-        setPreviewUrl(`http://localhost:8080/uploads/${product.imagePath}`);
+      setPreviewUrl(`http://localhost:8080/uploads/${product.imagePath}`);
     }
-};
+  };
 
   const handleLogout = () => {
     openModal(
@@ -460,39 +474,39 @@ const SellerDashboard = () => {
             ) : (
               products.map((product) => (
                 <div key={product.id} className="product-item">
-                    <div className="product-image-container">
-                        <img
-                            src={product.imagePath 
-                                ? `http://localhost:8080/uploads/${product.imagePath}`
-                                : `http://localhost:8080/uploads/default-image.jpeg`}
-                            alt={product.name}
-                            className="product-image"
-                            onError={(e) => {
-                                console.log('Resim yükleme hatası:', product.imagePath);
-                                e.target.src = 'http://localhost:8080/uploads/default-image.jpeg';
-                            }}
-                        />
-                    </div>
-                    <h4>{product.name}</h4>
-                    <p>Fiyat: {product.price} TL</p>
-                    <p>Stok: {product.stock}</p>
-                    <p>Marka: {product.brand}</p>
-                    <div className="product-actions">
-                        <button
-                            className="edit-button"
-                            onClick={() => handleEdit(product)}
-                        >
-                            Düzenle
-                        </button>
-                        <button
-                            className="delete-button"
-                            onClick={() => handleDelete(product.id)}
-                        >
-                            Sil
-                        </button>
-                    </div>
+                  <div className="product-image-container">
+                    <img
+                      src={product.imagePath
+                        ? `http://localhost:8080/uploads/${product.imagePath}`
+                        : `http://localhost:8080/uploads/default-image.jpeg`}
+                      alt={product.name}
+                      className="product-image"
+                      onError={(e) => {
+                        console.log('Resim yükleme hatası:', product.imagePath);
+                        e.target.src = 'http://localhost:8080/uploads/default-image.jpeg';
+                      }}
+                    />
+                  </div>
+                  <h4>{product.name}</h4>
+                  <p>Fiyat: {product.price} TL</p>
+                  <p>Stok: {product.stock}</p>
+                  <p>Marka: {product.brand}</p>
+                  <div className="product-actions">
+                    <button
+                      className="edit-button"
+                      onClick={() => handleEdit(product)}
+                    >
+                      Düzenle
+                    </button>
+                    <button
+                      className="delete-button"
+                      onClick={() => handleDelete(product.id)}
+                    >
+                      Sil
+                    </button>
+                  </div>
                 </div>
-            ))
+              ))
             )}
           </div>
         </div>
@@ -512,8 +526,23 @@ const SellerDashboard = () => {
                 borderRadius: '12px'
               }}
             >
-              Bekleyen Siparişler ({orders.filter(order => order.status === 'PENDING').length})
+              Bekleyen Siparişler ({orders.filter(order => order.status === 'PENDING' && order.orderItems.some(item => item.quantity === 1)).length})
             </button>
+            <button
+              className={`order-tab ${orderTab === 'shipped' ? 'active' : ''}`}
+              onClick={() => setOrderTab('shipped')}
+              style={{
+                backgroundColor: orderTab === 'shipped' ? '#6366f1' : '#242830',
+                color: orderTab === 'shipped' ? 'white' : '#94a3b8',
+                padding: '1.5rem',
+                flex: 1,
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                borderRadius: '12px'
+              }}
+            >
+              Kargoya Verilen Siparişler ({orders.filter(order => order.status === 'PENDING' && order.orderItems.some(item => item.quantity === 0)).length})
+            </button>
+
             <button
               className={`order-tab ${orderTab === 'completed' ? 'active' : ''}`}
               onClick={() => setOrderTab('completed')}
@@ -539,8 +568,10 @@ const SellerDashboard = () => {
             {orders
               .filter(order =>
                 orderTab === 'pending'
-                  ? order.status === 'PENDING'
-                  : order.status === 'SHIPPED'
+                  ? order.status === 'PENDING' && order.orderItems.some(item => item.quantity === 1)
+                  : orderTab === 'shipped'
+                    ? order.status === 'PENDING' && order.orderItems.some(item => item.quantity === 0)
+                    : order.status === 'SHIPPED' && order.orderItems.some(item => item.quantity === 1)
               )
               .map(order => (
                 <div key={order.id} className="product-item order-card" style={{
@@ -604,12 +635,14 @@ const SellerDashboard = () => {
                         color: '#94a3b8'
                       }}>
                         <span>{item.productName}</span>
-                        <span>{item.quantity} adet</span>
+                        {item.quantity > 0 && (
+                          <span>{item.quantity} adet</span>
+                        )}
                       </div>
                     ))}
                   </div>
 
-                  {order.status === 'PENDING' && (
+                  {orderTab !== 'shipped' && order.status === 'PENDING' && (
                     <button
                       className="edit-button"
                       onClick={() => handleShipOrder(order.id)}
