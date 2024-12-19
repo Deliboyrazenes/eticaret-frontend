@@ -343,388 +343,396 @@ function UserProfile() {
 
     return (
         <div className='user-profile'>
-        <div className='user-profile-body'>
-            <div className="modern-profile-container">
-                <div className="profile-header">
-                    <div className="profile-cover">
-                        <div className="cover-overlay"></div>
-                        <div className="atlas-brand">
-                            <div className="atlas-logo-container">
-                                <Link to="/" className="atlas-text" style={{ textDecoration: 'none' }}>
-                                    <h1>ATLAS</h1>
-                                </Link>
-                                <div className="atlas-accent"></div>
-                                <span className="atlas-tagline">Yeni Nesil Alışveriş</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="profile-header-content">
-                        <div className="profile-header-info">
-                            <h1>{user.firstName} {user.lastName}</h1>
-                            {!isEditing && (
-                                <button className="edit-profile-btn" onClick={handleEdit}>
-                                    <FiEdit /> Profili Düzenle
-                                </button>
-                            )}
-                        </div>
-                    </div>
-                </div>
-
-                <div className="profile-body">
-                    <div className="profile-navigation">
-                        <button
-                            className={`nav-item ${activeTab === 'profile' ? 'active' : ''}`}
-                            onClick={() => setActiveTab('profile')}
-                        >
-                            <FiUser /> Kişisel Bilgiler
-                        </button>
-                        <button
-                            className={`nav-item ${activeTab === 'addresses' ? 'active' : ''}`}
-                            onClick={() => setActiveTab('addresses')}
-                        >
-                            <FiMapPin /> Adreslerim
-                        </button>
-                    </div>
-
-                    <div className="profile-content">
-                        {errors.api && (
-                            <div className="api-error">
-                                <p>{errors.api}</p>
-                            </div>
-                        )}
-
-                        {activeTab === 'profile' && (
-                            <div className="info-grid">
-                                <div className="info-card">
-                                    <div className="info-card-header">
-                                        <FiUser className="info-icon" />
-                                        <h3>Kişisel Bilgiler</h3>
-                                    </div>
-                                    <div className="info-card-content">
-                                        {isEditing ? (
-                                            <>
-                                                <div className="edit-form-row">
-                                                    <label>Ad</label>
-                                                    <input
-                                                        type="text"
-                                                        name="firstName"
-                                                        value={editedUser.firstName}
-                                                        onChange={handleInputChange}
-                                                        className={errors.firstName ? 'error' : ''}
-                                                    />
-                                                    {errors.firstName && <span className="error-message">{errors.firstName}</span>}
-                                                </div>
-                                                <div className="edit-form-row">
-                                                    <label>Soyad</label>
-                                                    <input
-                                                        type="text"
-                                                        name="lastName"
-                                                        value={editedUser.lastName}
-                                                        onChange={handleInputChange}
-                                                        className={errors.lastName ? 'error' : ''}
-                                                    />
-                                                    {errors.lastName && <span className="error-message">{errors.lastName}</span>}
-                                                </div>
-                                                <div className="edit-form-row">
-                                                    <label>E-posta</label>
-                                                    <input
-                                                        type="email"
-                                                        name="email"
-                                                        value={editedUser.email}
-                                                        onChange={handleInputChange}
-                                                        className={errors.email ? 'error' : ''}
-                                                        disabled
-                                                    />
-                                                    {errors.email && <span className="error-message">{errors.email}</span>}
-                                                </div>
-                                                <div className="edit-form-row">
-                                                    <label>Telefon</label>
-                                                    <input
-                                                        type="tel"
-                                                        name="phone"
-                                                        value={editedUser.phone}
-                                                        onChange={handleInputChange}
-                                                        className={errors.phone ? 'error' : ''}
-                                                    />
-                                                    {errors.phone && <span className="error-message">{errors.phone}</span>}
-                                                </div>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <div className="info-row">
-                                                    <span className="info-label">Ad Soyad</span>
-                                                    <span className="info-value">{user.firstName} {user.lastName}</span>
-                                                </div>
-                                                <div className="info-row">
-                                                    <span className="info-label">E-posta</span>
-                                                    <span className="info-value">{user.email}</span>
-                                                </div>
-                                                <div className="info-row">
-                                                    <span className="info-label">Telefon</span>
-                                                    <span className="info-value">{user.phone || 'Belirtilmemiş'}</span>
-                                                </div>
-                                            </>
-                                        )}
-                                    </div>
+            <div className='user-profile-body'>
+                <div className="modern-profile-container">
+                    <div className="profile-header">
+                        <div className="profile-cover">
+                            <div className="cover-overlay"></div>
+                            <div className="atlas-brand">
+                                <div className="atlas-logo-container">
+                                    <Link to="/" className="atlas-text" style={{ textDecoration: 'none' }}>
+                                        <h1>ATLAS</h1>
+                                    </Link>
+                                    <div className="atlas-accent"></div>
+                                    <span className="atlas-tagline">Yeni Nesil Alışveriş</span>
                                 </div>
+                            </div>
+                        </div>
 
-                                {isEditing && (
+                        <div className="profile-header-content">
+                            <div className="profile-header-info">
+                                <h1>{user.firstName} {user.lastName}</h1>
+                                {!isEditing && (
+                                    <button className="edit-profile-btn" onClick={handleEdit}>
+                                        <FiEdit /> Profili Düzenle
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="profile-body">
+                        <div className="profile-navigation">
+                            <button
+                                className={`nav-item ${activeTab === 'profile' ? 'active' : ''}`}
+                                onClick={() => setActiveTab('profile')}
+                            >
+                                <FiUser /> Kişisel Bilgiler
+                            </button>
+                            <button
+                                className={`nav-item ${activeTab === 'addresses' ? 'active' : ''}`}
+                                onClick={() => setActiveTab('addresses')}
+                            >
+                                <FiMapPin /> Adreslerim
+                            </button>
+                        </div>
+
+                        <div className="profile-content">
+                            {errors.api && (
+                                <div className="api-error">
+                                    <p>{errors.api}</p>
+                                </div>
+                            )}
+
+                            {activeTab === 'profile' && (
+                                <div className="info-grid">
                                     <div className="info-card">
                                         <div className="info-card-header">
-                                            <FiLock className="info-icon" />
-                                            <h3>Şifre Güncelleme</h3>
+                                            <FiUser className="info-icon" />
+                                            <h3>Kişisel Bilgiler</h3>
                                         </div>
                                         <div className="info-card-content">
-                                            <div className="edit-form-row">
-                                                <label>Mevcut Şifre</label>
-                                                <input
-                                                    type="password"
-                                                    name="currentPassword"
-                                                    value={editedUser.currentPassword || ''}
-                                                    onChange={handleInputChange}
-                                                    className={errors.currentPassword ? 'error' : ''}
-                                                    placeholder="Mevcut şifrenizi girin"
-                                                />
-                                                {errors.currentPassword && (
-                                                    <span className="error-message">{errors.currentPassword}</span>
-                                                )}
-                                            </div>
-                                            <div className="edit-form-row">
-                                                <label>Yeni Şifre</label>
-                                                <input
-                                                    type="password"
-                                                    name="newPassword"
-                                                    value={editedUser.newPassword || ''}
-                                                    onChange={handleInputChange}
-                                                    className={errors.newPassword ? 'error' : ''}
-                                                    placeholder="Yeni şifrenizi girin"
-                                                />
-                                                {errors.newPassword && (
-                                                    <span className="error-message">{errors.newPassword}</span>
-                                                )}
-                                            </div>
-                                            <div className="edit-form-row">
-                                                <label>Yeni Şifre (Tekrar)</label>
-                                                <input
-                                                    type="password"
-                                                    name="confirmPassword"
-                                                    value={editedUser.confirmPassword || ''}
-                                                    onChange={handleInputChange}
-                                                    className={errors.confirmPassword ? 'error' : ''}
-                                                    placeholder="Yeni şifrenizi tekrar girin"
-                                                />
-                                                {errors.confirmPassword && (
-                                                    <span className="error-message">{errors.confirmPassword}</span>
-                                                )}
-                                            </div>
-                                            <div className="edit-actions">
-                                                <button
-                                                    className="modern-update-btn"
-                                                    onClick={handlePasswordUpdate}
-                                                >
-                                                    <FiSave className="btn-icon" />
-                                                    <span>Şifreyi Güncelle</span>
-                                                </button>
-                                            </div>
+                                            {isEditing ? (
+                                                <>
+                                                    <div className="edit-form-row">
+                                                        <label>Ad</label>
+                                                        <input
+                                                            type="text"
+                                                            name="firstName"
+                                                            value={editedUser.firstName}
+                                                            onChange={handleInputChange}
+                                                            className={errors.firstName ? 'error' : ''}
+                                                        />
+                                                        {errors.firstName && <span className="error-message">{errors.firstName}</span>}
+                                                    </div>
+                                                    <div className="edit-form-row">
+                                                        <label>Soyad</label>
+                                                        <input
+                                                            type="text"
+                                                            name="lastName"
+                                                            value={editedUser.lastName}
+                                                            onChange={handleInputChange}
+                                                            className={errors.lastName ? 'error' : ''}
+                                                        />
+                                                        {errors.lastName && <span className="error-message">{errors.lastName}</span>}
+                                                    </div>
+                                                    <div className="edit-form-row">
+                                                        <label>E-posta</label>
+                                                        <input
+                                                            type="email"
+                                                            name="email"
+                                                            value={editedUser.email}
+                                                            onChange={handleInputChange}
+                                                            className={errors.email ? 'error' : ''}
+                                                            disabled
+                                                        />
+                                                        {errors.email && <span className="error-message">{errors.email}</span>}
+                                                    </div>
+                                                    <div className="edit-form-row">
+                                                        <label>Telefon</label>
+                                                        <input
+                                                            type="tel"
+                                                            name="phone"
+                                                            value={editedUser.phone}
+                                                            onChange={handleInputChange}
+                                                            className={errors.phone ? 'error' : ''}
+                                                        />
+                                                        {errors.phone && <span className="error-message">{errors.phone}</span>}
+                                                    </div>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <div className="info-row">
+                                                        <span className="info-label">Ad Soyad</span>
+                                                        <span className="info-value">{user.firstName} {user.lastName}</span>
+                                                    </div>
+                                                    <div className="info-row">
+                                                        <span className="info-label">E-posta</span>
+                                                        <span className="info-value">{user.email}</span>
+                                                    </div>
+                                                    <div className="info-row">
+                                                        <span className="info-label">Telefon</span>
+                                                        <span className="info-value">{user.phone || 'Belirtilmemiş'}</span>
+                                                    </div>
+                                                </>
+                                            )}
                                         </div>
                                     </div>
-                                )}
 
-                                <div className="info-card">
-                                    <div className="info-card-header">
-                                        <FiCalendar className="info-icon" />
-                                        <h3>Diğer Bilgiler</h3>
-                                    </div>
-                                    <div className="info-card-content">
-                                        {isEditing ? (
-                                            <>
+                                    {isEditing && (
+                                        <div className="info-card">
+                                            <div className="info-card-header">
+                                                <FiLock className="info-icon" />
+                                                <h3>Şifre Güncelleme</h3>
+                                            </div>
+                                            <div className="info-card-content">
                                                 <div className="edit-form-row">
-                                                    <label>Doğum Tarihi</label>
+                                                    <label>Mevcut Şifre</label>
                                                     <input
-                                                        type="date"
-                                                        name="dateOfBirth"
-                                                        value={editedUser.dateOfBirth || ''}
+                                                        type="password"
+                                                        name="currentPassword"
+                                                        value={editedUser.currentPassword || ''}
                                                         onChange={handleInputChange}
+                                                        className={errors.currentPassword ? 'error' : ''}
+                                                        placeholder="Mevcut şifrenizi girin"
+                                                    />
+                                                    {errors.currentPassword && (
+                                                        <span className="error-message">{errors.currentPassword}</span>
+                                                    )}
+                                                </div>
+                                                <div className="edit-form-row">
+                                                    <label>Yeni Şifre</label>
+                                                    <input
+                                                        type="password"
+                                                        name="newPassword"
+                                                        value={editedUser.newPassword || ''}
+                                                        onChange={handleInputChange}
+                                                        className={errors.newPassword ? 'error' : ''}
+                                                        placeholder="Yeni şifrenizi girin"
+                                                    />
+                                                    {errors.newPassword && (
+                                                        <span className="error-message">{errors.newPassword}</span>
+                                                    )}
+                                                </div>
+                                                <div className="edit-form-row">
+                                                    <label>Yeni Şifre (Tekrar)</label>
+                                                    <input
+                                                        type="password"
+                                                        name="confirmPassword"
+                                                        value={editedUser.confirmPassword || ''}
+                                                        onChange={handleInputChange}
+                                                        className={errors.confirmPassword ? 'error' : ''}
+                                                        placeholder="Yeni şifrenizi tekrar girin"
+                                                    />
+                                                    {errors.confirmPassword && (
+                                                        <span className="error-message">{errors.confirmPassword}</span>
+                                                    )}
+                                                </div>
+                                                <div className="edit-actions">
+                                                    <button
+                                                        className="modern-update-btn"
+                                                        onClick={handlePasswordUpdate}
+                                                    >
+                                                        <FiSave className="btn-icon" />
+                                                        <span>Şifreyi Güncelle</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    <div className="info-card">
+                                        <div className="info-card-header">
+                                            <FiCalendar className="info-icon" />
+                                            <h3>Diğer Bilgiler</h3>
+                                        </div>
+                                        <div className="info-card-content">
+                                            {isEditing ? (
+                                                <>
+                                                    <div className="edit-form-row">
+                                                        <label>Doğum Tarihi</label>
+                                                        <input
+                                                            type="date"
+                                                            name="dateOfBirth"
+                                                            value={editedUser.dateOfBirth || ''}
+                                                            onChange={handleInputChange}
+                                                        />
+                                                    </div>
+                                                    <div className="edit-form-row">
+                                                        <label>Cinsiyet</label>
+                                                        <select
+                                                            name="gender"
+                                                            value={editedUser.gender || ''}
+                                                            onChange={handleInputChange}
+                                                        >
+                                                            <option value="">Seçiniz</option>
+                                                            <option value="MALE">Erkek</option>
+                                                            <option value="FEMALE">Kadın</option>
+
+                                                        </select>
+                                                    </div>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <div className="info-row">
+                                                        <span className="info-label">Doğum Tarihi</span>
+                                                        <span className="info-value">
+                                                            {user.dateOfBirth ? formatDate(user.dateOfBirth) : 'Belirtilmemiş'}
+                                                        </span>
+                                                    </div>
+                                                    <div className="info-row">
+                                                        <span className="info-label">Cinsiyet</span>
+                                                        <span className="info-value">
+                                                            {user.gender === 'MALE' ? 'Erkek' :
+                                                                user.gender === 'FEMALE' ? 'Kadın' :
+                                                                    user.gender === 'OTHER' ? 'Diğer' : 'Belirtilmemiş'}
+                                                        </span>
+                                                    </div>
+                                                </>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            )}
+
+
+                            {activeTab === 'addresses' && (
+                                <div className="addresses-section">
+                                    <div className="addresses-header">
+                                        <h2>Kayıtlı Adreslerim</h2>
+                                        <button
+                                            className="add-address-btn"
+                                            onClick={() => setShowAddressForm(true)}
+                                        >
+                                            <FiPlus /> Yeni Adres Ekle
+                                        </button>
+                                    </div>
+
+                                    {showAddressForm && (
+                                        <div className="address-form-container">
+                                            <form onSubmit={handleAddressSubmit} className="address-form">
+                                                <div className="form-group">
+                                                    <label>Şehir</label>
+                                                    <input
+                                                        type="text"
+                                                        name="city"
+                                                        value={addressFormData.city}
+                                                        onChange={handleAddressFormChange}
+                                                        required
                                                     />
                                                 </div>
-                                                <div className="edit-form-row">
-                                                    <label>Cinsiyet</label>
-                                                    <select
-                                                        name="gender"
-                                                        value={editedUser.gender || ''}
-                                                        onChange={handleInputChange}
+                                                <div className="form-group">
+                                                    <label>İlçe</label>
+                                                    <input
+                                                        type="text"
+                                                        name="state"
+                                                        value={addressFormData.state}
+                                                        onChange={handleAddressFormChange}
+                                                        required
+                                                    />
+                                                </div>
+                                                <div className="form-group">
+                                                    <label>Adres Detayı</label>
+                                                    <textarea
+                                                        name="description"
+                                                        value={addressFormData.description}
+                                                        onChange={handleAddressFormChange}
+                                                        required
+                                                        style={{
+                                                            width: '100%',
+                                                            padding: '15px',
+                                                            border: '2px solid #e1e1e1',
+                                                            borderRadius: '12px',
+                                                            fontSize: '1rem',
+                                                            backgroundColor: '#f8f9fa'
+                                                        }}
+                                                    />
+                                                </div>
+                                                <div className="form-group">
+                                                    <label>Posta Kodu</label>
+                                                    <input
+                                                        type="text"
+                                                        name="postalCode"
+                                                        value={addressFormData.postalCode}
+                                                        onChange={handleAddressFormChange}
+                                                        required
+                                                        maxLength="5"
+                                                        pattern="\d{5}"
+                                                        title="Posta kodu 5 haneli olmalıdır"
+                                                    />
+                                                </div>
+                                                <div className="form-actions">
+                                                    <button type="submit" className="save-btn">
+                                                        <FiSave /> {editingAddressId ? 'Güncelle' : 'Kaydet'}
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        className="cancel-btn"
+                                                        onClick={() => {
+                                                            setShowAddressForm(false);
+                                                            setAddressFormData({
+                                                                city: '',
+                                                                state: '',
+                                                                description: '',
+                                                                postalCode: ''
+                                                            });
+                                                            setEditingAddressId(null);
+                                                        }}
                                                     >
-                                                        <option value="">Seçiniz</option>
-                                                        <option value="MALE">Erkek</option>
-                                                        <option value="FEMALE">Kadın</option>
+                                                        İptal
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    )}
 
-                                                    </select>
+
+                                    <div className="addresses-grid">
+                                        {user.addresses && user.addresses.length > 0 ? (
+                                            user.addresses.map((address) => (
+                                                <div key={address.id} className="address-card">
+                                                    <div className="address-card-header">
+                                                        <h3>{address.city}</h3>
+                                                        <div className="address-actions">
+                                                            <button
+                                                                className="edit-btn"
+                                                                onClick={() => handleEditAddress(address)}
+                                                            >
+                                                                <FiEdit />
+                                                            </button>
+                                                            <button
+                                                                className="delete-btn"
+                                                                onClick={() => handleDeleteAddress(address.id)}
+                                                            >
+                                                                <FiTrash2 />
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div className="address-card-content">
+                                                        <p><strong>İlçe:</strong> {address.state}</p>
+                                                        <p><strong>Adres:</strong> {address.description}</p>
+                                                        <p><strong>Posta Kodu:</strong> {address.postalCode}</p>
+                                                    </div>
                                                 </div>
-                                            </>
+                                            ))
                                         ) : (
-                                            <>
-                                                <div className="info-row">
-                                                    <span className="info-label">Doğum Tarihi</span>
-                                                    <span className="info-value">
-                                                        {user.dateOfBirth ? formatDate(user.dateOfBirth) : 'Belirtilmemiş'}
-                                                    </span>
-                                                </div>
-                                                <div className="info-row">
-                                                    <span className="info-label">Cinsiyet</span>
-                                                    <span className="info-value">
-                                                        {user.gender === 'MALE' ? 'Erkek' :
-                                                            user.gender === 'FEMALE' ? 'Kadın' :
-                                                                user.gender === 'OTHER' ? 'Diğer' : 'Belirtilmemiş'}
-                                                    </span>
-                                                </div>
-                                            </>
+                                            <div className="no-address-message">
+                                                <p>Henüz kayıtlı adresiniz bulunmamaktadır.</p>
+                                            </div>
                                         )}
                                     </div>
                                 </div>
+                            )}
 
-                            </div>
-
-                        )}
-
-
-                        {activeTab === 'addresses' && (
-                            <div className="addresses-section">
-                                <div className="addresses-header">
-                                    <h2>Kayıtlı Adreslerim</h2>
-                                    <button
-                                        className="add-address-btn"
-                                        onClick={() => setShowAddressForm(true)}
-                                    >
-                                        <FiPlus /> Yeni Adres Ekle
-                                    </button>
-                                </div>
-
-                                {showAddressForm && (
-                                    <div className="address-form-container">
-                                        <form onSubmit={handleAddressSubmit} className="address-form">
-                                            <div className="form-group">
-                                                <label>Şehir</label>
-                                                <input
-                                                    type="text"
-                                                    name="city"
-                                                    value={addressFormData.city}
-                                                    onChange={handleAddressFormChange}
-                                                    required
-                                                />
-                                            </div>
-                                            <div className="form-group">
-                                                <label>İlçe</label>
-                                                <input
-                                                    type="text"
-                                                    name="state"
-                                                    value={addressFormData.state}
-                                                    onChange={handleAddressFormChange}
-                                                    required
-                                                />
-                                            </div>
-                                            <div className="form-group">
-                                                <label>Adres Detayı</label>
-                                                <textarea
-                                                    name="description"
-                                                    value={addressFormData.description}
-                                                    onChange={handleAddressFormChange}
-                                                    required
-                                                />
-                                            </div>
-                                            <div className="form-group">
-                                                <label>Posta Kodu</label>
-                                                <input
-                                                    type="text"
-                                                    name="postalCode"
-                                                    value={addressFormData.postalCode}
-                                                    onChange={handleAddressFormChange}
-                                                    required
-                                                    maxLength="5"
-                                                    pattern="\d{5}"
-                                                    title="Posta kodu 5 haneli olmalıdır"
-                                                />
-                                            </div>
-                                            <div className="form-actions">
-                                                <button type="submit" className="save-btn">
-                                                    <FiSave /> {editingAddressId ? 'Güncelle' : 'Kaydet'}
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    className="cancel-btn"
-                                                    onClick={() => {
-                                                        setShowAddressForm(false);
-                                                        setAddressFormData({
-                                                            city: '',
-                                                            state: '',
-                                                            description: '',
-                                                            postalCode: ''
-                                                        });
-                                                        setEditingAddressId(null);
-                                                    }}
-                                                >
-                                                    İptal
-                                                </button>
-                                            </div>
-                                        </form>
+                            <div>
+                                {isEditing && (
+                                    <div className="button-group">
+                                        <button className="save-btn" onClick={handleSave}>
+                                            <FiSave className="btn-icon" />
+                                            <span>Kaydet</span>
+                                        </button>
+                                        <button className="cancel-btn" onClick={handleCancel}>
+                                            <span>İptal</span>
+                                        </button>
                                     </div>
                                 )}
-
-                                
-                                <div className="addresses-grid">
-                                    {user.addresses && user.addresses.length > 0 ? (
-                                        user.addresses.map((address) => (
-                                            <div key={address.id} className="address-card">
-                                                <div className="address-card-header">
-                                                    <h3>{address.city}</h3>
-                                                    <div className="address-actions">
-                                                        <button
-                                                            className="edit-btn"
-                                                            onClick={() => handleEditAddress(address)}
-                                                        >
-                                                            <FiEdit />
-                                                        </button>
-                                                        <button
-                                                            className="delete-btn"
-                                                            onClick={() => handleDeleteAddress(address.id)}
-                                                        >
-                                                            <FiTrash2 />
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                                <div className="address-card-content">
-                                                    <p><strong>İlçe:</strong> {address.state}</p>
-                                                    <p><strong>Adres:</strong> {address.description}</p>
-                                                    <p><strong>Posta Kodu:</strong> {address.postalCode}</p>
-                                                </div>
-                                            </div>
-                                        ))
-                                    ) : (
-                                        <div className="no-address-message">
-                                            <p>Henüz kayıtlı adresiniz bulunmamaktadır.</p>
-                                        </div>
-                                    )}
-                                </div>
                             </div>
-                        )}
-
-                        <div>
-                            {isEditing && (
-                                <div className="button-group">
-                                    <button className="save-btn" onClick={handleSave}>
-                                        <FiSave className="btn-icon" />
-                                        <span>Kaydet</span>
-                                    </button>
-                                    <button className="cancel-btn" onClick={handleCancel}>
-                                        <span>İptal</span>
-                                    </button>
-                                </div>
-                            )}
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
         </div>
     );
 }

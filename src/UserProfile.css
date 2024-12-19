@@ -460,7 +460,7 @@ select:focus {
 
 .save-btn,
 .cancel-btn {
-  width: 100%;
+  margin: 10px;
   /* Butonların container'ı kadar genişlemesi */
   padding: 12px 24px;
 }
@@ -865,7 +865,13 @@ input.error {
     margin-top: 20px;
   }
 
-
+  textarea{
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
 
   /* Adres Kartı İçeriği */
   .address-card-content {
