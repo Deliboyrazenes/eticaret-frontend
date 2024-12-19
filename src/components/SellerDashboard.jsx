@@ -210,68 +210,69 @@ const SellerDashboard = () => {
     e.preventDefault();
 
     try {
-      let imageFileName = formData.imagePath; // Mevcut resim yolunu koru
+        let imageFileName = formData.imagePath; // Mevcut resim yolunu koru
 
-      // Yeni dosya seçildiyse yükle
-      if (selectedFile) {
-        const formDataFile = new FormData();
-        formDataFile.append('file', selectedFile);
+        // Yeni dosya seçildiyse yükle
+        if (selectedFile) {
+            const formDataFile = new FormData();
+            formDataFile.append('file', selectedFile);
 
-        const uploadResponse = await fetch('http://localhost:8080/api/upload/image', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${getAuthToken()}`
-          },
-          body: formDataFile
-        });
+            const uploadResponse = await fetch('http://localhost:8080/api/upload/image', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${getAuthToken()}`
+                },
+                body: formDataFile
+            });
 
-        if (!uploadResponse.ok) {
-          throw new Error('Dosya yüklenemedi');
+            if (!uploadResponse.ok) {
+                throw new Error('Dosya yüklenemedi');
+            }
+
+            imageFileName = await uploadResponse.text();
         }
 
-        imageFileName = await uploadResponse.text();
-      }
+        // Ürün verilerini hazırla
+        const productData = {
+            ...formData,
+            imagePath: imageFileName,
+            category: { id: categoryId } // Kategori ID'sini güncelle
+        };
 
-      // Ürün verilerini hazırla
-      const productData = {
-        ...formData,
-        imagePath: imageFileName
-      };
+        // Ürün kaydetme/güncelleme isteği
+        const productResponse = await fetch(
+            editingProductId
+                ? `http://localhost:8080/product/update/${editingProductId}`
+                : `http://localhost:8080/product/add/${categoryId}`,
+            {
+                method: editingProductId ? "PUT" : "POST",
+                headers: {
+                    ...createHeaders(),
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(productData)
+            }
+        );
 
-      // Ürün kaydetme/güncelleme isteği
-      const productResponse = await fetch(
-        editingProductId
-          ? `http://localhost:8080/product/update/${editingProductId}`
-          : `http://localhost:8080/product/add/${categoryId}`,
-        {
-          method: editingProductId ? "PUT" : "POST",
-          headers: {
-            ...createHeaders(),
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(productData)
+        if (!productResponse.ok) {
+            throw new Error(editingProductId ? 'Ürün güncellenemedi' : 'Ürün eklenemedi');
         }
-      );
 
-      if (!productResponse.ok) {
-        throw new Error(editingProductId ? 'Ürün güncellenemedi' : 'Ürün eklenemedi');
-      }
+        showToast(
+            editingProductId ? 'Ürün başarıyla güncellendi' : 'Ürün başarıyla eklendi',
+            'success'
+        );
 
-      showToast(
-        editingProductId ? 'Ürün başarıyla güncellendi' : 'Ürün başarıyla eklendi',
-        'success'
-      );
-
-      // Form temizleme
-      setFormData({ name: "", price: "", stock: "", brand: "", imagePath: "" });
-      setSelectedFile(null);
-      setPreviewUrl(null);
-      setEditingProductId(null);
-      fetchProducts();
+        // Form temizleme
+        setFormData({ name: "", price: "", stock: "", brand: "", imagePath: "" });
+        setSelectedFile(null);
+        setPreviewUrl(null);
+        setEditingProductId(null);
+        fetchProducts();
     } catch (error) {
-      showToast(error.message, 'error');
+        showToast(error.message, 'error');
     }
-  };
+};
 
   const handleDelete = (productId) => {
     openModal(
@@ -298,19 +299,19 @@ const SellerDashboard = () => {
 
   const handleEdit = (product) => {
     setFormData({
-      name: product.name,
-      price: product.price,
-      stock: product.stock,
-      brand: product.brand,
-      imagePath: product.imagePath // Mevcut resim yolunu da form verilerine ekle
+        name: product.name,
+        price: product.price,
+        stock: product.stock,
+        brand: product.brand,
+        imagePath: product.imagePath // Mevcut resim yolunu da form verilerine ekle
     });
-    setCategoryId(product.categoryId);
+    setCategoryId(product.categoryId); // Kategori ID'sini güncelle
     setEditingProductId(product.id);
     // Eğer ürünün resmi varsa önizleme göster
     if (product.imagePath) {
-      setPreviewUrl(`http://localhost:8080/uploads/${product.imagePath}`);
+        setPreviewUrl(`http://localhost:8080/uploads/${product.imagePath}`);
     }
-  };
+};
 
   const handleLogout = () => {
     openModal(
