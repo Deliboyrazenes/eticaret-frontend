@@ -67,13 +67,13 @@ const Checkout = () => {
             const token = localStorage.getItem('token');
             if (!token) {
                 toast.error('Lütfen önce giriş yapın');
-                setLoading(false);
+                navigate('/login');
                 return;
             }
 
             const response = await axios.get('http://localhost:8080/cart', {
                 headers: {
-                    Authorization: `Bearer ${token.trim()}`,
+                    Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json',
                 },
                 withCredentials: true,
@@ -89,26 +89,16 @@ const Checkout = () => {
         }
     };
 
-    // Kart numarası formatlaması fonksiyonu
     const formatCardNumber = (value) => {
-        // Sadece rakamları al, boşlukları ve diğer karakterleri kaldır
         const numbers = value.replace(/[^\d]/g, '');
-
-        // 16 rakamdan fazlasını alma
         const trimmed = numbers.slice(0, 16);
-
-        // 4'lü gruplara böl
         const parts = [];
         for (let i = 0; i < trimmed.length; i += 4) {
             parts.push(trimmed.slice(i, i + 4));
         }
-
-        // Grupları boşlukla birleştir
         return parts.join(' ');
     };
 
-
-    // Tarih formatlaması
     const formatExpiryDate = (value) => {
         const cleanValue = value.replace(/\D+/g, '');
         let formattedValue = cleanValue;
@@ -121,7 +111,7 @@ const Checkout = () => {
             formattedValue = formattedValue.substring(0, 2) + '/' + formattedValue.substring(2);
         }
 
-        return formattedValue;
+        return formattedValue.slice(0, 5);
     };
 
     const handleCardInfoChange = (e) => {
@@ -129,31 +119,22 @@ const Checkout = () => {
 
         switch (name) {
             case 'cardHolderName':
-                // Sadece harf ve boşluk
                 if (/^[a-zA-ZğüşıöçĞÜŞİÖÇ\s]*$/.test(value)) {
-                    setCardInfo(prev => ({ ...prev, [name]: value }));
+                    setCardInfo(prev => ({ ...prev, [name]: value.toUpperCase() }));
                 }
                 break;
 
             case 'cardNumber':
-                const formattedNumber = formatCardNumber(value);
-                setCardInfo(prev => ({ ...prev, cardNumber: formattedNumber }));
+                setCardInfo(prev => ({ ...prev, cardNumber: formatCardNumber(value) }));
                 break;
 
             case 'expiryDate':
-                // AA/YY formatı
-                const formattedDate = formatExpiryDate(value);
-                if (formattedDate.length <= 5) {
-                    setCardInfo(prev => ({ ...prev, [name]: formattedDate }));
-                }
+                setCardInfo(prev => ({ ...prev, expiryDate: formatExpiryDate(value) }));
                 break;
 
             case 'cvv':
-                // Sadece rakam ve 3 karakter
-                const cvv = value.replace(/\D/g, '');
-                if (cvv.length <= 3) {
-                    setCardInfo(prev => ({ ...prev, [name]: cvv }));
-                }
+                const cvv = value.replace(/\D/g, '').slice(0, 3);
+                setCardInfo(prev => ({ ...prev, cvv }));
                 break;
 
             default:
@@ -162,22 +143,40 @@ const Checkout = () => {
     };
 
     const validateCardInfo = () => {
-        // Kart sahibi kontrolü
         if (!cardInfo.cardHolderName || cardInfo.cardHolderName.length < 5) {
-            toast.error('Geçerli bir kart sahibi adı giriniz');
+            toast.error('Geçerli bir kart sahibi adı giriniz', {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
             return false;
         }
 
-        // Kart numarası kontrolü
         const cardNumberOnly = cardInfo.cardNumber.replace(/\s/g, '');
         if (!cardNumberOnly || cardNumberOnly.length !== 16) {
-            toast.error('Geçerli bir kart numarası giriniz');
+            toast.error('Geçerli bir kart numarası giriniz', {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
             return false;
         }
 
-        // Son kullanma tarihi kontrolü
         if (!cardInfo.expiryDate || cardInfo.expiryDate.length !== 5) {
-            toast.error('Geçerli bir son kullanma tarihi giriniz');
+            toast.error('Geçerli bir son kullanma tarihi giriniz', {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
             return false;
         }
 
@@ -188,13 +187,26 @@ const Checkout = () => {
 
         if (parseInt(year) < currentYear ||
             (parseInt(year) === currentYear && parseInt(month) < currentMonth)) {
-            toast.error('Kartınızın son kullanma tarihi geçmiş');
+            toast.error('Kartınızın son kullanma tarihi geçmiş', {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
             return false;
         }
 
-        // CVV kontrolü
         if (!cardInfo.cvv || cardInfo.cvv.length !== 3) {
-            toast.error('Geçerli bir CVV numarası giriniz');
+            toast.error('Geçerli bir CVV numarası giriniz', {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
             return false;
         }
 
@@ -202,13 +214,19 @@ const Checkout = () => {
     };
 
     const completeCheckout = async () => {
-        if (!paymentMethod) {
-            toast.error('Lütfen bir ödeme yöntemi seçin');
+        if (!selectedAddressId) {
+            toast.error('Lütfen bir teslimat adresi seçiniz!', {
+                position: "top-right",
+                autoClose: 3000,
+            });
             return;
         }
 
-        if (!selectedAddressId) {
-            toast.error('Lütfen bir teslimat adresi seçin');
+        if (!paymentMethod) {
+            toast.error('Lütfen bir ödeme yöntemi seçiniz!', {
+                position: "top-right",
+                autoClose: 3000,
+            });
             return;
         }
 
@@ -218,7 +236,7 @@ const Checkout = () => {
 
         try {
             const token = localStorage.getItem('token');
-            await axios.post(
+            const response = await axios.post(
                 'http://localhost:8080/orders/create',
                 null,
                 {
@@ -227,48 +245,68 @@ const Checkout = () => {
                         'Content-Type': 'application/json',
                     },
                     params: {
-                        paymentMethod: paymentMethod,
+                        paymentMethod: paymentMethod
                     },
+                    withCredentials: true,
                 }
             );
 
-            toast.success('Sipariş başarıyla tamamlandı');
-            navigate('/orders');
+            if (response.status === 201) {
+                toast.success('Sipariş başarıyla tamamlandı');
+                setCart({
+                    id: null,
+                    grandTotal: 0,
+                    customer: {},
+                    products: [],
+                });
+                navigate('/orders');
+            }
         } catch (error) {
+            console.error('Sipariş hatası:', error);
             toast.error('Sipariş tamamlanırken bir hata oluştu');
         }
     };
 
+
+
     if (loading) {
-        return <div className="loading">Yükleniyor...</div>;
+        return (
+            <div className="loading-container">
+                <div className="loading">Yükleniyor...</div>
+            </div>
+        );
     }
 
     if (!cart.products || cart.products.length === 0) {
         return (
-            <div className="cart-empty">
-                <h2>Sepetiniz Boş</h2>
-                <p>Alışverişe başlamak için ürünleri keşfedin!</p>
-                <button onClick={() => navigate('/products')}>Alışverişe Başla</button>
+            <div className="empty-cart-container">
+                <div className="cart-empty">
+                    <h2>Sepetiniz Boş</h2>
+                    <p>Alışverişe başlamak için ürünleri keşfedin!</p>
+                    <button onClick={() => navigate('/products')}>Alışverişe Başla</button>
+                </div>
             </div>
         );
     }
 
     return (
-        <div>
+        <div className="checkout-page">
             <Menu />
             <div className="checkout-body">
                 <div className="checkout-container">
                     <h1 className="checkout-title">Sipariş Tamamlama</h1>
                     <div className="checkout-grid">
+                        {/* Sipariş Özeti */}
                         <div className="checkout-card order-summary-card">
                             <h3>Sipariş Özeti</h3>
                             <div className="order-summary">
                                 {groupedProducts.map((product) => (
                                     <div key={product.id} className="order-item">
-                                        <span>
-                                            {product.name} (x{product.quantity})
-                                        </span>
-                                        <span>
+                                        <div className="product-info">
+                                            <span className="product-name">{product.name}</span>
+                                            <span className="product-quantity">  ({product.quantity})</span>
+                                        </div>
+                                        <span className="product-price">
                                             {(product.price * product.quantity).toFixed(2)} TL
                                         </span>
                                     </div>
@@ -276,16 +314,18 @@ const Checkout = () => {
                             </div>
                             <div className="order-total">
                                 <span>Toplam:</span>
-                                <span>{cart.grandTotal.toFixed(2)} TL</span>
+                                <span className="total-price">{cart.grandTotal.toFixed(2)} TL</span>
                             </div>
                         </div>
 
+                        {/* Teslimat Adresi */}
                         <div className="checkout-card address-card">
                             <h3>Teslimat Adresi</h3>
                             {addresses.length > 0 ? (
                                 <select
                                     value={selectedAddressId}
                                     onChange={(e) => setSelectedAddressId(e.target.value)}
+                                    className="address-select"
                                 >
                                     <option value="">Adres Seçiniz</option>
                                     {addresses.map((address) => (
@@ -297,18 +337,23 @@ const Checkout = () => {
                             ) : (
                                 <div className="no-address">
                                     <p>Kayıtlı adresiniz bulunmamaktadır.</p>
-                                    <button onClick={() => navigate('/profile/addresses')}>
+                                    <button
+                                        onClick={() => navigate('/profile')}
+                                        className="add-address-button"
+                                    >
                                         Adres Ekle
                                     </button>
                                 </div>
                             )}
                         </div>
 
+                        {/* Ödeme Yöntemi */}
                         <div className="checkout-card payment-method-card">
                             <h3>Ödeme Yöntemi</h3>
                             <select
                                 onChange={(e) => setPaymentMethod(e.target.value)}
                                 value={paymentMethod}
+                                className="payment-select"
                             >
                                 <option value="">Bir ödeme yöntemi seçin</option>
                                 <option value="CREDIT_CARD">Kredi Kartı</option>
@@ -331,8 +376,8 @@ const Checkout = () => {
                                         placeholder="Kart Numarası"
                                         value={cardInfo.cardNumber}
                                         onChange={handleCardInfoChange}
-                                        maxLength="19" // 16 rakam + 3 boşluk
-                                        inputMode="numeric"
+                                        maxLength="19"
+                                        className="card-input"
                                     />
                                     <div className="card-info-row">
                                         <input
@@ -341,7 +386,7 @@ const Checkout = () => {
                                             placeholder="AA/YY"
                                             value={cardInfo.expiryDate}
                                             onChange={handleCardInfoChange}
-                                            className="card-input"
+                                            className="card-input expiry"
                                         />
                                         <input
                                             type="text"
@@ -349,7 +394,7 @@ const Checkout = () => {
                                             placeholder="CVV"
                                             value={cardInfo.cvv}
                                             onChange={handleCardInfoChange}
-                                            className="card-input"
+                                            className="card-input cvv"
                                         />
                                     </div>
                                 </div>
@@ -360,10 +405,10 @@ const Checkout = () => {
                     <button
                         className="checkout-button"
                         onClick={completeCheckout}
-                        disabled={!selectedAddressId || !paymentMethod}
                     >
                         Siparişi Tamamla
                     </button>
+
                 </div>
             </div>
             <Footer />
