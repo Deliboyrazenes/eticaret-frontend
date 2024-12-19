@@ -173,8 +173,8 @@
   color: #333;
 }
 
-.checkout-button {
-  background-color: #28a745;
+.card-button {
+  background: linear-gradient(90deg, #007bff, #00c6ff);
   color: #fff;
   border: none;
   border-radius: 4px;
