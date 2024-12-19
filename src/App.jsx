@@ -13,7 +13,7 @@ import RegisterForm from './components/RegisterForm';
 import ProductDetail from './components/ProductDetail';
 import Checkout from './components/Checkout';
 import Orders from './components/Orders';
-import Cart from './components/Cart'; // Cart component'ini import ediyoruz
+import Cart from './components/Cart'; 
 import { ToastContainer } from 'react-toastify'; // Toast bildirimleri için
 import 'react-toastify/dist/ReactToastify.css'; // Toast stilleri
 
