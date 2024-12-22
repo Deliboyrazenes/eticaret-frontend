@@ -78,50 +78,7 @@
   font-size: 1.1rem;  
 }  
 
-/* Search Results */  
-.search-results {  
-  position: absolute;  
-  top: calc(100% + 0.5rem);  
-  left: 0;  
-  right: 0;  
-  background: var(--bg-card);  
-  border: 1px solid rgba(255, 255, 255, 0.05);  
-  border-radius: 16px;  
-  max-height: 400px;  
-  overflow-y: auto;  
-  z-index: 1000;  
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2),  
-              0 0 20px rgba(0, 0, 0, 0.1);  
-  animation: slideDown 0.3s ease;  
-}  
 
-.search-result-item {  
-  display: flex;  
-  align-items: center;  
-  padding: 0.8rem 1rem;  
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);  
-  transition: all 0.3s ease;  
-  cursor: pointer;  
-}  
-
-.search-result-item:last-child {  
-  border-bottom: none;  
-}  
-
-.search-result-item:hover {  
-  background: rgba(255, 255, 255, 0.05);  
-  transform: translateX(4px);  
-}  
-
-.search-result-item img {  
-  width: 48px;  
-  height: 48px;  
-  border-radius: 10px;  
-  object-fit: cover;  
-  margin-right: 1rem;  
-  transition: all 0.3s ease;  
-  border: 1px solid rgba(255, 255, 255, 0.1);  
-}  
 
 .product-info h4 {  
   color: var(--text-light);  
@@ -151,6 +108,7 @@
 .nav-button {  
   display: flex;  
   align-items: center;  
+  text-decoration: none;
   gap: 0.6rem;  
   padding: 0.6rem 1.2rem;  
   background: rgba(255, 255, 255, 0.03);  
@@ -313,27 +271,6 @@
   }  
 }  
 
-/* Custom Scrollbar */  
-.search-results::-webkit-scrollbar,  
-.dropdown-menu::-webkit-scrollbar {  
-  width: 4px;  
-}  
-
-.search-results::-webkit-scrollbar-track,  
-.dropdown-menu::-webkit-scrollbar-track {  
-  background: transparent;  
-}  
-
-.search-results::-webkit-scrollbar-thumb,  
-.dropdown-menu::-webkit-scrollbar-thumb {  
-  background: rgba(255, 255, 255, 0.1);  
-  border-radius: 2px;  
-}  
-
-.search-results::-webkit-scrollbar-thumb:hover,  
-.dropdown-menu::-webkit-scrollbar-thumb:hover {  
-  background: rgba(255, 255, 255, 0.2);  
-}  
 
 /* Responsive Design */  
 @media (max-width: 1024px) {  
@@ -378,3 +315,202 @@
   font-style: italic;  
   font-weight: 300;  
 }  
+
+/* Arama Bölümü Stilleri */
+.atlas-search {
+  position: relative;
+  flex: 0 1 40%;
+}
+
+.atlas-search__bar {
+  position: relative;
+}
+
+.atlas-search__input {
+  width: 100%;
+  padding: 0.8rem 1rem 0.8rem 3rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  font-size: 0.95rem;
+  background: rgba(255, 255, 255, 0.03);
+  color: #f1f5f9;
+  transition: all 0.2s ease;
+}
+
+.atlas-search__input:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.05);
+  border-color: #6366f1;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+}
+
+.atlas-search__icon {
+  position: absolute;
+  left: 1.2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  font-size: 1.1rem;
+}
+
+/* Arama Sonuçları */
+.atlas-search__results {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 0;
+  right: 0;
+  background: #1e293b;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  max-height: 400px;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.atlas-search__result-item {
+  display: flex;
+  align-items: center;
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.atlas-search__result-item:last-child {
+  border-bottom: none;
+}
+
+.atlas-search__result-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.atlas-search__image-container {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  margin-right: 1rem;
+}
+
+.atlas-search__thumbnail {
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.atlas-search__image-count {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.atlas-search__product-info {
+  flex: 1;
+}
+
+.atlas-search__category {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-bottom: 4px;
+}
+
+.atlas-search__product-name {
+  color: #f1f5f9;
+  font-size: 14px;
+  margin: 0 0 4px 0;
+  font-weight: 500;
+}
+
+.atlas-search__product-details {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.atlas-search__price {
+  color: #6366f1;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.atlas-search__stock {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.atlas-search__stock--in {
+  background-color: rgba(34, 197, 94, 0.1);
+  color: #22c55e;
+}
+
+.atlas-search__stock--out {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+/* Loading State */
+.atlas-search__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  padding: 1rem;
+  color: #94a3b8;
+}
+
+.atlas-search__spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(99, 102, 241, 0.1);
+  border-top-color: #6366f1;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* No Results */
+.atlas-search__no-results {
+  padding: 1.5rem;
+  text-align: center;
+  color: #94a3b8;
+}
+
+/* Scrollbar Stilleri */
+.atlas-search__results::-webkit-scrollbar {
+  width: 4px;
+}
+
+.atlas-search__results::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.atlas-search__results::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
+
+.atlas-search__results::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Animation */
+@keyframes spin {
+  to {
+      transform: rotate(360deg);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .atlas-search {
+      display: none;
+  }
+}

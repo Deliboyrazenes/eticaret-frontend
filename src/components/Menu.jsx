@@ -173,61 +173,80 @@ const Navbar = () => {
                 <h1>ATLAS</h1>
             </Link>
 
-            <div className="search-container" ref={searchRef}>
-                <div className="search-bar">
-                    <FiSearch className="search-icon" />
+            <div className="atlas-search" ref={searchRef}>
+                <div className="atlas-search__bar">
+                    <FiSearch className="atlas-search__icon" />
                     <input
                         type="text"
                         placeholder="Ürün ara..."
                         value={searchTerm}
                         onChange={handleSearch}
+                        className="atlas-search__input"
                     />
                 </div>
 
                 {searchResults.length > 0 && (
-                    <div className="search-results">
-                        {searchResults.map((product) => (
-                            <div
-                                key={product.id}
-                                className="search-result-item"
-                                onClick={() => handleSearchResultClick(product.id)}
-                            >
-                                <img
-                                    src={product.imagePath
-                                        ? `http://localhost:8080/uploads/${product.imagePath}`
-                                        : `http://localhost:8080/uploads/default-image.jpeg`}
-                                    alt={product.name}
-                                    className="search-result-thumbnail"
-                                    onError={(e) => {
-                                        console.log('Resim yükleme hatası:', product.imagePath);
-                                        e.target.src = 'http://localhost:8080/uploads/default-image.jpeg';
-                                    }}
-                                />
-                                <div className="product-info">
-                                    <h4>{product.categoryName}<span> &gt; </span>
-                                        <span className="product-name-font">{product.name}</span>
-                                    </h4>
-                                    <p>
-                                        {product.price.toLocaleString('tr-TR', {
-                                            style: 'currency',
-                                            currency: 'TRY'
-                                        })}
-                                    </p>
+                    <div className="atlas-search__results">
+                        {searchResults.map((product) => {
+                            const images = product.imagePath ? product.imagePath.split(',') : [];
+                            const firstImage = images.length > 0 ? images[0] : null;
+
+                            return (
+                                <div
+                                    key={product.id}
+                                    className="atlas-search__result-item"
+                                    onClick={() => handleSearchResultClick(product.id)}
+                                >
+                                    <div className="atlas-search__image-container">
+                                        <img
+                                            src={firstImage
+                                                ? `http://localhost:8080/uploads/${firstImage.trim()}`
+                                                : `http://localhost:8080/uploads/default-image.jpeg`}
+                                            alt={product.name}
+                                            className="atlas-search__thumbnail"
+                                            onError={(e) => {
+                                                e.target.src = 'http://localhost:8080/uploads/default-image.jpeg';
+                                            }}
+                                            loading="lazy"
+                                        />
+                                        {images.length > 1 && (
+                                            <span className="atlas-search__image-count">+{images.length - 1}</span>
+                                        )}
+                                    </div>
+                                    <div className="atlas-search__product-info">
+                                        <div className="atlas-search__category">
+                                            {product.categoryName}
+                                        </div>
+                                        <h4 className="atlas-search__product-name">{product.name}</h4>
+                                        <div className="atlas-search__product-details">
+                                            <span className="atlas-search__price">
+                                                {product.price.toLocaleString('tr-TR', {
+                                                    style: 'currency',
+                                                    currency: 'TRY'
+                                                })}
+                                            </span>
+                                            {product.stock > 0 ? (
+                                                <span className="atlas-search__stock atlas-search__stock--in">Stokta</span>
+                                            ) : (
+                                                <span className="atlas-search__stock atlas-search__stock--out">Tükendi</span>
+                                            )}
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 )}
 
                 {isSearching && (
-                    <div className="search-loading">
-                        <div className="loading-spinner"></div>
+                    <div className="atlas-search__loading">
+                        <div className="atlas-search__spinner"></div>
                         <span>Aranıyor...</span>
                     </div>
                 )}
 
                 {!isSearching && searchTerm.length >= 2 && searchResults.length === 0 && (
-                    <div className="no-results">
+                    <div className="atlas-search__no-results">
                         Sonuç bulunamadı
                     </div>
                 )}
