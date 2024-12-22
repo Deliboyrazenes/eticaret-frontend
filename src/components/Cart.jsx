@@ -129,19 +129,28 @@ const Cart = () => {
                         {Object.values(quantities).map((product) => (
                             <div key={product.id} className="cart-item">
                                 <div className="item-image">
-                                    <img
-                                        src={product.imagePath
-                                            ? `http://localhost:8080/uploads/${product.imagePath}`
-                                            : `http://localhost:8080/uploads/default-image.jpeg`}
-                                        alt={product.name}
-                                        loading="lazy"
-                                        onError={(e) => {
-                                            console.log('Resim yükleme hatası:', product.imagePath);
-                                            e.target.src = 'http://localhost:8080/uploads/default-image.jpeg';
-                                        }}
-                                        className="card-product-image"
-                                    />
+                                    {product.imagePath ? (
+                                        <img
+                                            src={`http://localhost:8080/uploads/${product.imagePath.split(',')[0]}`} // İlk resmi göster
+                                            alt={product.name}
+                                            loading="lazy"
+                                            onError={(e) => {
+                                                console.log('Resim yükleme hatası:', product.imagePath);
+                                                e.target.src = 'http://localhost:8080/uploads/default-image.jpeg';
+                                            }}
+                                            className="cart-product-image"
+                                            onClick={() => navigate(`/product/${product.id}`)} // Ürün detayına yönlendirme
+                                        />
+                                    ) : (
+                                        <img
+                                            src="http://localhost:8080/uploads/default-image.jpeg"
+                                            alt="Varsayılan ürün resmi"
+                                            className="cart-product-image"
+                                        />
+                                    )}
                                 </div>
+
+
                                 <div className="item-details">
                                     <h3 className="product-name">{product.name}</h3>
                                     <p className="product-price">{product.price} TL</p>
@@ -190,7 +199,7 @@ const Cart = () => {
                                 navigate('/checkout')
                             }}
                         >
-                            Ödemeye Geç
+                            Sepeti Onayla
                         </button>
                     </div>
                 </div>
