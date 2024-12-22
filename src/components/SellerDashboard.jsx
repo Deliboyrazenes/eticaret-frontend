@@ -15,6 +15,11 @@ const SellerDashboard = () => {
   const [orderTab, setOrderTab] = useState('pending');
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
+  // Resim yükleme state'leri
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [previewUrls, setPreviewUrls] = useState([]);
+  const [existingImages, setExistingImages] = useState([]); // Mevcut resimleri tutmak için
+
   const [formData, setFormData] = useState({
     name: "",
     price: "",
@@ -35,6 +40,13 @@ const SellerDashboard = () => {
     });
   };
 
+  const getImageUrl = (imagePath) => `http://localhost:8080/uploads/${imagePath}`;
+
+  // Mevcut resimleri ayıran yardımcı fonksiyon
+  const parseImagePaths = (imagePath) => {
+    return imagePath ? imagePath.split(',') : [];
+  };
+
   const [modalConfig, setModalConfig] = useState({
     isOpen: false,
     title: '',
@@ -43,11 +55,15 @@ const SellerDashboard = () => {
   });
 
   const handleFileSelect = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setSelectedFile(file);
-      setPreviewUrl(URL.createObjectURL(file));
-    }
+    const files = Array.from(e.target.files);
+    setSelectedFiles(files);
+
+    // Önceki önizlemeleri temizle
+    previewUrls.forEach(url => URL.revokeObjectURL(url));
+
+    // Yeni önizlemeler oluştur
+    const urls = files.map(file => URL.createObjectURL(file));
+    setPreviewUrls(urls);
   };
 
   // Modal'ı açmak için helper fonksiyon
@@ -210,69 +226,92 @@ const SellerDashboard = () => {
     e.preventDefault();
 
     try {
-        let imageFileName = formData.imagePath; // Mevcut resim yolunu koru
+      let finalImagePaths = [...existingImages]; // Mevcut resimleri koru
 
-        // Yeni dosya seçildiyse yükle
-        if (selectedFile) {
-            const formDataFile = new FormData();
-            formDataFile.append('file', selectedFile);
+      // Yeni dosyalar seçildiyse yükle
+      if (selectedFiles.length > 0) {
+        const formDataFile = new FormData();
+        selectedFiles.forEach(file => {
+          formDataFile.append('files', file);
+        });
 
-            const uploadResponse = await fetch('http://localhost:8080/api/upload/image', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${getAuthToken()}`
-                },
-                body: formDataFile
-            });
+        const uploadResponse = await fetch('http://localhost:8080/api/upload/images', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${getAuthToken()}`
+          },
+          body: formDataFile
+        });
 
-            if (!uploadResponse.ok) {
-                throw new Error('Dosya yüklenemedi');
-            }
-
-            imageFileName = await uploadResponse.text();
+        if (!uploadResponse.ok) {
+          throw new Error('Dosya yüklenemedi');
         }
 
-        // Ürün verilerini hazırla
-        const productData = {
-            ...formData,
-            imagePath: imageFileName,
-            category: { id: categoryId } // Kategori ID'sini güncelle
-        };
+        const newFileNames = await uploadResponse.json();
+        finalImagePaths = [...finalImagePaths, ...newFileNames];
+      }
 
-        // Ürün kaydetme/güncelleme isteği
-        const productResponse = await fetch(
-            editingProductId
-                ? `http://localhost:8080/product/update/${editingProductId}`
-                : `http://localhost:8080/product/add/${categoryId}`,
-            {
-                method: editingProductId ? "PUT" : "POST",
-                headers: {
-                    ...createHeaders(),
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(productData)
-            }
-        );
+      // Eğer hiç resim kalmadıysa boş string, aksi halde virgülle birleştir
+      const imagePathString = finalImagePaths.length > 0 ? finalImagePaths.join(',') : '';
 
-        if (!productResponse.ok) {
-            throw new Error(editingProductId ? 'Ürün güncellenemedi' : 'Ürün eklenemedi');
-        }
+      const productData = {
+        name: formData.name,
+        price: formData.price,
+        stock: formData.stock,
+        brand: formData.brand,
+        imagePath: imagePathString,
+        category: { id: categoryId } // Kategori bilgisi ekleniyor
+      };
 
-        showToast(
-            editingProductId ? 'Ürün başarıyla güncellendi' : 'Ürün başarıyla eklendi',
-            'success'
-        );
+      const url = editingProductId
+        ? `http://localhost:8080/product/update/${editingProductId}`
+        : `http://localhost:8080/product/add/${categoryId}`;
 
-        // Form temizleme
-        setFormData({ name: "", price: "", stock: "", brand: "", imagePath: "" });
-        setSelectedFile(null);
-        setPreviewUrl(null);
-        setEditingProductId(null);
-        fetchProducts();
+      console.log('Gönderilen veri:', productData); // Debug için
+
+      const response = await fetch(url, {
+        method: editingProductId ? "PUT" : "POST",
+        headers: {
+          ...createHeaders(),
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(productData)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'İşlem başarısız');
+      }
+
+      showToast(
+        editingProductId ? 'Ürün güncellendi' : 'Ürün eklendi',
+        'success'
+      );
+
+      // Form temizleme
+      resetForm();
+      fetchProducts();
+
     } catch (error) {
-        showToast(error.message, 'error');
+      console.error('Hata detayı:', error);
+      showToast(error.message, 'error');
     }
-};
+  };
+
+  const resetForm = () => {
+    setFormData({
+      name: "",
+      price: "",
+      stock: "",
+      brand: "",
+      imagePath: ""
+    });
+    setSelectedFiles([]);
+    setPreviewUrls([]);
+    setExistingImages([]);
+    setEditingProductId(null);
+    setCategoryId("");
+  };
 
   const handleDelete = (productId) => {
     openModal(
@@ -299,19 +338,21 @@ const SellerDashboard = () => {
 
   const handleEdit = (product) => {
     setFormData({
-        name: product.name,
-        price: product.price,
-        stock: product.stock,
-        brand: product.brand,
-        imagePath: product.imagePath // Mevcut resim yolunu da form verilerine ekle
+      name: product.name,
+      price: product.price,
+      stock: product.stock,
+      brand: product.brand,
+      imagePath: product.imagePath
     });
-    setCategoryId(product.categoryId); // Kategori ID'sini güncelle
+    setCategoryId(product.categoryId);
     setEditingProductId(product.id);
-    // Eğer ürünün resmi varsa önizleme göster
-    if (product.imagePath) {
-        setPreviewUrl(`http://localhost:8080/uploads/${product.imagePath}`);
-    }
-};
+
+    // Mevcut resimleri ayarla
+    const currentImages = parseImagePaths(product.imagePath);
+    setExistingImages(currentImages);
+    setPreviewUrls([]); // Yeni yüklenecek resimlerin önizlemesini temizle
+    setSelectedFiles([]); // Yeni seçilen dosyaları temizle
+  };
 
   const handleLogout = () => {
     openModal(
@@ -446,16 +487,75 @@ const SellerDashboard = () => {
                   ))}
                 </select>
                 <div className="form-group">
-                  <label>Ürün Fotoğrafı</label>
+                  <label>Ürün Fotoğrafları</label>
                   <input
                     type="file"
+                    multiple
                     accept="image/*"
                     onChange={handleFileSelect}
                     className="file-input"
                   />
-                  {previewUrl && (
-                    <div className="image-preview">
-                      <img src={previewUrl} alt="Önizleme" />
+
+                  {/* Mevcut resimler */}
+                  {existingImages.length > 0 && (
+                    <div className="existing-images">
+                      <h4>Mevcut Resimler:</h4>
+                      <div className="image-preview-container">
+                        {existingImages.map((imagePath, index) => (
+                          <div key={`existing-${index}`} className="preview-image">
+                            <img
+                              src={getImageUrl(imagePath)}
+                              alt={`Existing ${index + 1}`}
+                              onError={(e) => {
+                                console.log('Resim yükleme hatası:', imagePath);
+                                e.target.src = '/placeholder.jpg'; // varsayılan resim
+                              }}
+                            />
+                            <button
+                              type="button"
+                              className="remove-image"
+                              onClick={() => {
+                                const newImages = existingImages.filter((_, i) => i !== index);
+                                setExistingImages(newImages);
+                                // Form verisini de güncelle
+                                const newImagePath = newImages.join(',');
+                                setFormData(prev => ({
+                                  ...prev,
+                                  imagePath: newImagePath
+                                }));
+                              }}
+                            >
+                              ×
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Yeni yüklenecek resimlerin önizlemesi */}
+                  {previewUrls.length > 0 && (
+                    <div className="new-images">
+                      <h4>Yeni Eklenecek Resimler:</h4>
+                      <div className="image-preview-container">
+                        {previewUrls.map((url, index) => (
+                          <div key={`new-${index}`} className="preview-image">
+                            <img src={url} alt={`Preview ${index + 1}`} />
+                            <button
+                              type="button"
+                              className="remove-image"
+                              onClick={() => {
+                                const newPreviewUrls = previewUrls.filter((_, i) => i !== index);
+                                const newSelectedFiles = selectedFiles.filter((_, i) => i !== index);
+                                setPreviewUrls(newPreviewUrls);
+                                setSelectedFiles(newSelectedFiles);
+                              }}
+                            >
+                              ×
+                            </button>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>
@@ -476,17 +576,18 @@ const SellerDashboard = () => {
               products.map((product) => (
                 <div key={product.id} className="product-item">
                   <div className="product-image-container">
-                    <img
-                      src={product.imagePath
-                        ? `http://localhost:8080/uploads/${product.imagePath}`
-                        : `http://localhost:8080/uploads/default-image.jpeg`}
-                      alt={product.name}
-                      className="product-image"
-                      onError={(e) => {
-                        console.log('Resim yükleme hatası:', product.imagePath);
-                        e.target.src = 'http://localhost:8080/uploads/default-image.jpeg';
-                      }}
-                    />
+                    {product.imagePath && product.imagePath.split(',').map((image, index) => (
+                      <img
+                        key={index}
+                        src={`http://localhost:8080/uploads/${image}`}
+                        alt={product.name}
+                        className={`product-image ${index === 0 ? 'main-image' : 'thumbnail'}`}
+                        onError={(e) => {
+                          console.log('Resim yükleme hatası:', image);
+                          e.target.src = 'http://localhost:8080/uploads/default-image.jpeg';
+                        }}
+                      />
+                    ))}
                   </div>
                   <h4>{product.name}</h4>
                   <p>Fiyat: {product.price} TL</p>
