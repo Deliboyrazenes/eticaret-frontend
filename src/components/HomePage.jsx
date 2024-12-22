@@ -2,18 +2,20 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import axios from "axios";
-import { 
-  FiArrowRight, 
-  FiShoppingBag, 
-  FiHeart, 
-  FiTruck,
-  FiPackage,
-  FiShield,
-  FiGrid,
-  FiChevronRight 
+import {
+    FiArrowRight,
+    FiShoppingBag,
+    FiHeart,
+    FiTruck,
+    FiPackage,
+    FiShield,
+    FiGrid,
+    FiChevronRight
 } from "react-icons/fi";
 import Navbar from "./Menu";
 import Footer from "./Footer";
+import menBanner from '../assets/men-banner.jpg';
+import womenBanner from '../assets/women-banner.jpg';
 import "../HomePage.css";
 
 const HomePage = () => {
@@ -68,20 +70,20 @@ const HomePage = () => {
     };
 
     const categoryFeatures = [
-        { 
-            icon: <FiShoppingBag />, 
-            title: "Premium Ürünler", 
-            desc: "Özel seçilmiş koleksiyonlar" 
+        {
+            icon: <FiShoppingBag />,
+            title: "Premium Ürünler",
+            desc: "Özel seçilmiş koleksiyonlar"
         },
-        { 
-            icon: <FiTruck />, 
-            title: "Hızlı Teslimat", 
-            desc: "Aynı gün kargo imkanı" 
+        {
+            icon: <FiTruck />,
+            title: "Hızlı Teslimat",
+            desc: "Aynı gün kargo imkanı"
         },
-        { 
-            icon: <FiShield />, 
-            title: "Güvenli Alışveriş", 
-            desc: "256-bit SSL güvenliği" 
+        {
+            icon: <FiShield />,
+            title: "Güvenli Alışveriş",
+            desc: "256-bit SSL güvenliği"
         }
     ];
 
@@ -115,11 +117,49 @@ const HomePage = () => {
     return (
         <div className="hp-homepage">
             <Navbar />
-            
+
             <div className="hp-gradient-bg">
                 <div className="hp-gradient-circle-1"></div>
                 <div className="hp-gradient-circle-2"></div>
             </div>
+
+            <section className="hp-fullscreen-categories">
+                <div className="hp-category-slide" onClick={() => navigate('/products/category/5')}>
+                    <div
+                        className="hp-category-background"
+                        style={{ backgroundImage: `url(${menBanner})` }}
+                    />
+                    <div className="hp-category-overlay" />
+                    <div className="hp-slide-content">
+                        <h2>ERKEK</h2>
+                        <p>Yeni Sezon Koleksiyonu</p>
+                        <div className="hp-button-container">
+                            <button className="hp-slide-button">
+                                Keşfet
+                                <FiArrowRight />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="hp-category-slide" onClick={() => navigate('/products/category/4')}>
+                    <div
+                        className="hp-category-background"
+                        style={{ backgroundImage: `url(${womenBanner})` }}
+                    />
+                    <div className="hp-category-overlay" />
+                    <div className="hp-slide-content">
+                        <h2>KADIN</h2>
+                        <p>Yeni Sezon Koleksiyonu</p>
+                        <div className="hp-button-container">
+                            <button className="hp-slide-button">
+                                Keşfet
+                                <FiArrowRight />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
             <section className="hp-hero">
                 <div className="hp-hero-content">
