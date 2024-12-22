@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 
 // Component imports
 import HomePage from './components/HomePage';
@@ -13,9 +13,31 @@ import RegisterForm from './components/RegisterForm';
 import ProductDetail from './components/ProductDetail';
 import Checkout from './components/Checkout';
 import Orders from './components/Orders';
-import Cart from './components/Cart'; 
-import { ToastContainer } from 'react-toastify'; // Toast bildirimleri için
-import 'react-toastify/dist/ReactToastify.css'; // Toast stilleri
+import Cart from './components/Cart';
+import Chatbot from './components/Chatbot/Chatbot'; // Chatbot component'i import edildi
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+// ChatbotWrapper component'i - route kontrolü için
+const ChatbotWrapper = () => {
+  const location = useLocation();
+  
+  // Chatbot'un görünmemesi gereken sayfalar
+  const excludedPaths = [
+    '/seller-login',
+    '/seller-dashboard',
+    '/customer-login',
+    '/login',
+    '/register'
+  ];
+
+  // Eğer mevcut sayfa excludedPaths içindeyse chatbot'u gösterme
+  if (excludedPaths.some(path => location.pathname.startsWith(path))) {
+    return null;
+  }
+
+  return <Chatbot />;
+};
 
 const App = () => {
   return (
@@ -46,7 +68,7 @@ const App = () => {
         <Route path="/profile" element={<UserProfile />} />
 
         {/* Cart Route */}
-        <Route path="/cart" element={<Cart />} /> {/* Sepet sayfası route'u */}
+        <Route path="/cart" element={<Cart />} />
         <Route path="/products/category/:categoryId" element={<ProductList />} />
         <Route path="/checkout" element={<Checkout />} />
 
@@ -58,6 +80,9 @@ const App = () => {
         <Route path="/customer-dashboard" element={<ProductList />} />
         <Route path="/seller-dashboard" element={<SellerDashboard />} />
       </Routes>
+
+      {/* Chatbot Wrapper */}
+      <ChatbotWrapper />
     </Router>
   );
 };

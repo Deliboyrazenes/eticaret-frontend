@@ -133,7 +133,7 @@ const ProductList = () => {
             maxPrice: '',
             sortBy: 'default'
         });
-    
+
         // Filtreleri uygula
         const applyFilters = () => {
             setFilters({
@@ -142,9 +142,9 @@ const ProductList = () => {
                 sortBy: tempFilters.sortBy
             });
         };
-    
+
         return (
-            <motion.div 
+            <motion.div
                 className="filter-section"
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -159,7 +159,7 @@ const ProductList = () => {
                             onChange={(e) => {
                                 const value = e.target.value;
                                 if (value === '' || /^\d*$/.test(value)) {
-                                    setTempFilters(prev => ({...prev, minPrice: value}));
+                                    setTempFilters(prev => ({ ...prev, minPrice: value }));
                                 }
                             }}
                             className="price-input"
@@ -172,16 +172,16 @@ const ProductList = () => {
                             onChange={(e) => {
                                 const value = e.target.value;
                                 if (value === '' || /^\d*$/.test(value)) {
-                                    setTempFilters(prev => ({...prev, maxPrice: value}));
+                                    setTempFilters(prev => ({ ...prev, maxPrice: value }));
                                 }
                             }}
                             className="price-input"
                         />
                     </div>
-    
+
                     <select
                         value={tempFilters.sortBy}
-                        onChange={(e) => setTempFilters(prev => ({...prev, sortBy: e.target.value}))}
+                        onChange={(e) => setTempFilters(prev => ({ ...prev, sortBy: e.target.value }))}
                         className="sort-select-filter"
                     >
                         <option value="default">Sıralama</option>
@@ -190,7 +190,7 @@ const ProductList = () => {
                         <option value="name-asc">İsim: A-Z</option>
                         <option value="name-desc">İsim: Z-A</option>
                     </select>
-    
+
                     <button
                         type="button"
                         className="apply-filters"
@@ -198,7 +198,7 @@ const ProductList = () => {
                     >
                         Filtreleri Uygula
                     </button>
-    
+
                     <button
                         type="button"
                         className="clear-filters"
@@ -340,7 +340,7 @@ const ProductList = () => {
                             <div className="product-image-wrapper">
                                 <img
                                     src={product.imagePath
-                                        ? `http://localhost:8080/uploads/${product.imagePath}`
+                                        ? `http://localhost:8080/uploads/${product.imagePath.split(',')[0]}` // İlk resmi al
                                         : `http://localhost:8080/uploads/default-image.jpeg`}
                                     alt={product.name}
                                     loading="lazy"
