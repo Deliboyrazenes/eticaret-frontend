@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import Menu from './Menu';
 import Footer from './Footer';
 import { toast } from 'react-toastify';
@@ -15,6 +15,8 @@ const ProductDetail = () => {
     const [error, setError] = useState(null);
     const [quantity, setQuantity] = useState(1);
     const [addingToCart, setAddingToCart] = useState(false);
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [images, setImages] = useState([]);
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -28,6 +30,9 @@ const ProductDetail = () => {
                     }
                 });
                 setProduct(response.data);
+                if (response.data.imagePath) {
+                    setImages(response.data.imagePath.split(','));
+                }
             } catch (error) {
                 setError(error.message);
             } finally {
@@ -37,6 +42,126 @@ const ProductDetail = () => {
 
         fetchProduct();
     }, [id]);
+
+    const handleImageError = (e) => {
+        console.log('Resim yükleme hatası');
+        e.target.src = 'http://localhost:8080/uploads/default-image.jpeg';
+    };
+
+    const ImageModal = ({ image, onClose }) => {
+        const currentIndex = images.indexOf(image);
+    
+        const showPreviousImage = (e) => {
+            e.stopPropagation();
+            if (currentIndex > 0) {
+                setSelectedImage(images[currentIndex - 1]);
+            }
+        };
+    
+        const showNextImage = (e) => {
+            e.stopPropagation();
+            if (currentIndex < images.length - 1) {
+                setSelectedImage(images[currentIndex + 1]);
+            }
+        };
+    
+        useEffect(() => {
+            const handleKeyPress = (e) => {
+                if (e.key === 'ArrowLeft') showPreviousImage(e);
+                if (e.key === 'ArrowRight') showNextImage(e);
+                if (e.key === 'Escape') onClose();
+            };
+    
+            window.addEventListener('keydown', handleKeyPress);
+            return () => window.removeEventListener('keydown', handleKeyPress);
+        }, [currentIndex]);
+    
+        return (
+            <motion.div 
+                className="pd-modal-overlay"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={onClose}
+            >
+                <motion.div 
+                    className="pd-modal-content"
+                    initial={{ scale: 0.5, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.5, opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    onClick={e => e.stopPropagation()}
+                >
+                    {currentIndex > 0 && (
+                        <button 
+                            className="pd-modal-nav pd-modal-prev"
+                            onClick={showPreviousImage}
+                            aria-label="Önceki resim"
+                        >
+                            ‹
+                        </button>
+                    )}
+                    
+                    <motion.img 
+                        key={image}
+                        src={`http://localhost:8080/uploads/${image}`} 
+                        alt="Büyük görüntü"
+                        className="pd-modal-image"
+                        onError={handleImageError}
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        transition={{ 
+                            duration: 0.3,
+                            ease: "easeInOut"
+                        }}
+                    />
+                    
+                    {currentIndex < images.length - 1 && (
+                        <button 
+                            className="pd-modal-nav pd-modal-next"
+                            onClick={showNextImage}
+                            aria-label="Sonraki resim"
+                        >
+                            ›
+                        </button>
+                    )}
+    
+                    <button className="pd-modal-close" onClick={onClose}>×</button>
+                    
+                    <div className="pd-modal-counter">
+                        {currentIndex + 1} / {images.length}
+                    </div>
+                </motion.div>
+            </motion.div>
+        );
+    };
+
+    const ImageGallery = () => (
+        <div className="pd-image-gallery">
+            <div className="pd-main-image-container">
+                <img
+                    src={`http://localhost:8080/uploads/${images[0]}`}
+                    alt={product.name}
+                    onClick={() => setSelectedImage(images[0])}
+                    className="pd-main-image"
+                    onError={handleImageError}
+                />
+            </div>
+            <div className="pd-thumbnail-container">
+                {images.map((image, index) => (
+                    <img
+                        key={index}
+                        src={`http://localhost:8080/uploads/${image}`}
+                        alt={`${product.name} ${index + 1}`}
+                        onClick={() => setSelectedImage(image)}
+                        className="pd-thumbnail-image"
+                        onError={handleImageError}
+                    />
+                ))}
+            </div>
+        </div>
+    );
 
     const handleQuantityChange = (newQuantity) => {
         const maxQuantity = product?.stock || 1;
@@ -141,18 +266,7 @@ const ProductDetail = () => {
             >
                 <div className="pd-product-detail-grid">
                     <div className="pd-product-image-section">
-                        <img
-                            src={product.imagePath
-                                ? `http://localhost:8080/uploads/${product.imagePath}`
-                                : `http://localhost:8080/uploads/default-image.jpeg`}
-                            alt={product.name}
-                            loading="lazy"
-                            onError={(e) => {
-                                console.log('Resim yükleme hatası:', product.imagePath);
-                                e.target.src = 'http://localhost:8080/uploads/default-image.jpeg';
-                            }}
-                            className="pd-product-image"
-                        />
+                        <ImageGallery />
                     </div>
 
                     <div className="pd-product-info-section">
@@ -240,6 +354,16 @@ const ProductDetail = () => {
                     </div>
                 </div>
             </motion.div>
+            
+            <AnimatePresence>
+                {selectedImage && (
+                    <ImageModal 
+                        image={selectedImage} 
+                        onClose={() => setSelectedImage(null)} 
+                    />
+                )}
+            </AnimatePresence>
+            
             <Footer />
         </div>
     );
